@@ -1,9 +1,10 @@
 import { z } from "zod";
 
-export const CreateCustomer = z.object({
+export const CustomerSchema = z.object({
 	name: z.string().min(1, {
-		message: "Required",
+		message: "Harus diisi",
 	}),
 	company: z.string(),
 	remarks: z.string(),
+	customerId: z.string(),
 });

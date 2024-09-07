@@ -6,7 +6,11 @@ export default async function getCustomerDetail(customerId: string) {
 			id: customerId,
 		},
 		include: {
-			services: true,
+			services: {
+				include: {
+					serviceGoods: true,
+				},
+			},
 			goods: true,
 			invoices: true,
 		},

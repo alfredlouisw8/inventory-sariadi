@@ -18,7 +18,10 @@ export default function AddCustomerDialog() {
 				<DialogHeader>
 					<DialogTitle>Tambah Customer</DialogTitle>
 				</DialogHeader>
-				<CustomerForm type="create" />
+				<CustomerForm
+					type="create"
+					successMessage="Customer berhasil ditambahkan"
+				/>
 			</DialogContent>
 		</Dialog>
 	);

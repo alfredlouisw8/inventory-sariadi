@@ -8,14 +8,12 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import ServiceForm from "./form";
-import { Good } from "@prisma/client";
 
 type Props = {
 	customerId: string;
-	goods: Good[];
 };
 
-export default function AddServiceDialog({ customerId, goods }: Props) {
+export default function AddServiceDialog({ customerId }: Props) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -25,7 +23,11 @@ export default function AddServiceDialog({ customerId, goods }: Props) {
 				<DialogHeader>
 					<DialogTitle>Tambah Jasa</DialogTitle>
 				</DialogHeader>
-				<ServiceForm type="create" customerId={customerId} goods={goods} />
+				<ServiceForm
+					type="create"
+					customerId={customerId}
+					successMessage="Jasa berhasil ditambahkan"
+				/>
 			</DialogContent>
 		</Dialog>
 	);

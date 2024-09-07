@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const CreateInvoice = z.object({
 	invoiceId: z.string().min(1, {
-		message: "Required",
+		message: "Harus diisi",
 	}),
 	customerId: z.string(),
 	paymentDate: z.date().optional(),

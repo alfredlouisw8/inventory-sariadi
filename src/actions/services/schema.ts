@@ -1,7 +1,7 @@
-import { ServiceCalculationType, ServiceType } from "@prisma/client";
 import { z } from "zod";
 
-export const CreateService = z.object({
+export const ServiceSchema = z.object({
+	serviceId: z.string(),
 	serviceType: z.string(),
 	serviceCalculationType: z.string(),
 	date: z.date(),

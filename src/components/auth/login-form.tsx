@@ -42,7 +42,7 @@ export default function LoginForm() {
 			const signInResult = await signIn("credentials", {
 				email,
 				password,
-				callbackUrl: "/dashboard",
+				callbackUrl: "/customers",
 				redirect: false, // Change this to false to handle redirection manually
 			});
 
@@ -54,7 +54,7 @@ export default function LoginForm() {
 				});
 			} else if (signInResult?.ok) {
 				// Redirect manually if login is successful
-				router.push("/dashboard");
+				router.push("/customers");
 			}
 		} catch (error) {
 			// Catch any unexpected errors
@@ -103,7 +103,7 @@ export default function LoginForm() {
 								)}
 							/>
 							<Button
-								disabled={form.formState.isSubmitting}
+								loading={form.formState.isSubmitting}
 								type="submit"
 								className="w-full"
 							>

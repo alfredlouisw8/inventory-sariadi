@@ -6,13 +6,10 @@ import { object, string, ZodError } from "zod";
 // Notice this is only an object, not a full Auth.js instance
 
 export const signInSchema = object({
-	email: string({ required_error: "Email is required" })
-		.min(1, "Email is required")
-		.email("Invalid email"),
-	password: string({ required_error: "Password is required" }).min(
-		1,
-		"Password is required"
-	),
+	email: string({ required_error: "Harus diisi" })
+		.min(1, "Harus diisi")
+		.email("Email tidak valid"),
+	password: string({ required_error: "Harus diisi" }).min(1, "Harus diisi"),
 });
 
 async function getUserFromDb(email: string, password: string) {

@@ -23,7 +23,11 @@ export default function AddGoodDialog({ customerId }: Props) {
 				<DialogHeader>
 					<DialogTitle>Tambah Barang</DialogTitle>
 				</DialogHeader>
-				<GoodForm type="create" customerId={customerId} />
+				<GoodForm
+					type="create"
+					customerId={customerId}
+					successMessage="Barang berhasil ditambahkan"
+				/>
 			</DialogContent>
 		</Dialog>
 	);

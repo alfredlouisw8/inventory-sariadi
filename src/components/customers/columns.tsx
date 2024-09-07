@@ -2,9 +2,15 @@
 
 import { Customer } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import {
+	ArrowUpDown,
+	EyeIcon,
+	MoreHorizontal,
+	PencilIcon,
+	Trash2,
+} from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -14,6 +20,8 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import EditCustomerDialog from "./edit-customer-dialog";
+import DeleteCustomerDialog from "./delete-customer-dialog";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -51,22 +59,32 @@ export const customerColumns: ColumnDef<Customer>[] = [
 		id: "actions",
 		cell: ({ row }) => {
 			return (
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" className="h-8 w-8 p-0">
-							<span className="sr-only">Open menu</span>
-							<MoreHorizontal className="h-4 w-4" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem>
-							<Link href={`/customers/${row.original.id}`}>Lihat detail</Link>
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
+				<div className="flex items-center gap-3 justify-end">
+					<Link
+						href={`/customers/${row.original.id}`}
+						className={buttonVariants({ size: "icon" })}
+					>
+						<EyeIcon className="h-4 w-4" />
+					</Link>
+					<EditCustomerDialog
+						customerData={row.original}
+						triggerComponent={
+							<Button variant="outline" size="icon">
+								<PencilIcon className=" h-4 w-4" />
+							</Button>
+						}
+					/>
+					<DeleteCustomerDialog
+						customerData={row.original}
+						triggerComponent={
+							<Button variant="destructive" size="icon">
+								<Trash2 className=" h-4 w-4" />
+							</Button>
+						}
+					/>
+				</div>
 			);
 		},
+		size: 200,
 	},
 ];

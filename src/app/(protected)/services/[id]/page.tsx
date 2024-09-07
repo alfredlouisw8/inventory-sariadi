@@ -1,10 +1,8 @@
 import getGoods from "@/actions/goods/getGoods";
 import getServiceDetail from "@/actions/services/getServiceDetail";
 import BackButton from "@/components/back-button";
-import AddGoodDialog from "@/components/goods/add-good-dialog";
-import { goodColumns } from "@/components/goods/columns";
 import AddServiceGoodDialog from "@/components/serviceGoods/add-service-goods-dialog";
-import { serviceGoodsColumns } from "@/components/serviceGoods/columns";
+import { serviceWithGoodsColumns } from "@/components/serviceGoods/columns";
 import { DataTable } from "@/components/ui/data-table";
 import { serviceCalculationTypeText, serviceTypeText } from "@/utils/functions";
 import { format } from "date-fns";
@@ -19,7 +17,7 @@ export default async function ServiceDetailPage({
 	const serviceDetail = await getServiceDetail(serviceId);
 
 	if (!serviceDetail) {
-		return <div>Service not found</div>;
+		return <div>Jasa tidak ditemukan</div>;
 	}
 
 	const goods = await getGoods(serviceDetail.customerId);
@@ -28,20 +26,33 @@ export default async function ServiceDetailPage({
 		<>
 			<BackButton />
 			<div className="flex items-center justify-between">
-				<h1 className="text-lg font-semibold md:text-2xl">Service Detail</h1>
+				<h1 className="text-lg font-semibold md:text-2xl">Detail Jasa</h1>
 			</div>
 			<div className="flex rounded-lg shadow-sm ">
 				<div className="flex flex-col gap-5 w-full">
 					<div>
-						<p>Tipe Jasa: {serviceTypeText(serviceDetail.serviceType)}</p>
 						<p>
-							Tambah / Kurang:{" "}
+							<b>Kode Jasa</b>: {serviceDetail.serviceCode}
+						</p>
+						<p>
+							<b>Tipe Jasa</b>: {serviceTypeText(serviceDetail.serviceType)}
+						</p>
+						<p>
+							<b>Tambah / Kurang</b>:{" "}
 							{serviceCalculationTypeText(serviceDetail.serviceCalculationType)}
 						</p>
-						<p>Tanggal Pengerjaan: {format(serviceDetail.date, "P")}</p>
-						<p>Keterangan: {serviceDetail.remarks}</p>
-						<p>Harga Beli: {serviceDetail.buyPrice}</p>
-						<p>Harga Jual: {serviceDetail.sellPrice}</p>
+						<p>
+							<b>Tanggal Pengerjaan</b>: {format(serviceDetail.date, "P")}
+						</p>
+						<p>
+							<b>Keterangan</b>: {serviceDetail.remarks}
+						</p>
+						<p>
+							<b>Harga Beli</b>: {serviceDetail.buyPrice}
+						</p>
+						<p>
+							<b>Harga Jual</b>: {serviceDetail.sellPrice}
+						</p>
 					</div>
 
 					<div className="flex flex-col gap-3">
@@ -51,7 +62,7 @@ export default async function ServiceDetailPage({
 						</div>
 						<div>
 							<DataTable
-								columns={serviceGoodsColumns}
+								columns={serviceWithGoodsColumns}
 								data={serviceDetail.serviceGoods}
 							/>
 						</div>

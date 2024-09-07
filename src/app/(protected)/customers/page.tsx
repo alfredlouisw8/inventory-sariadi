@@ -6,6 +6,10 @@ import { DataTable } from "@/components/ui/data-table";
 
 export default async function CustomersPage() {
 	const data = await getCustomers();
+	const filterColumn = {
+		label: "nama",
+		name: "name",
+	};
 
 	return (
 		<>
@@ -15,7 +19,11 @@ export default async function CustomersPage() {
 				<AddCustomerDialog />
 			</div>
 			<div className="flex rounded-lg shadow-sm" x-chunk="dashboard-02-chunk-1">
-				<DataTable columns={customerColumns} data={data} filterColumn="name" />
+				<DataTable
+					columns={customerColumns}
+					data={data}
+					filterColumn={filterColumn}
+				/>
 			</div>
 		</>
 	);

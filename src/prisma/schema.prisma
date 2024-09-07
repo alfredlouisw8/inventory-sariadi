@@ -107,6 +107,7 @@ model Customer {
 
 model Service {
   id                     String                 @id @default(auto()) @map("_id") @db.ObjectId
+  serviceCode            String
   serviceType            ServiceType
   serviceCalculationType ServiceCalculationType
   date                   DateTime
@@ -114,7 +115,7 @@ model Service {
   remarks                String?
   buyPrice               Int?                   @default(0)
   sellPrice              Int?                   @default(0)
-  customer               Customer               @relation(fields: [customerId], references: [id])
+  customer               Customer               @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId             String                 @db.ObjectId
   invoice                Invoice?               @relation(fields: [invoiceId], references: [id])
   invoiceId              String?                @db.ObjectId
@@ -129,7 +130,7 @@ model Invoice {
   tax         Boolean
 
   services   Service[]
-  customer   Customer  @relation(fields: [customerId], references: [id])
+  customer   Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId String    @db.ObjectId
 }
 
@@ -141,7 +142,7 @@ model Good {
   remarks       String?
   currentCount  Int           @default(0)
   serviceGoods  ServiceGood[] @relation(fields: [], references: [])
-  customer      Customer      @relation(fields: [customerId], references: [id])
+  customer      Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId    String        @db.ObjectId
 }
 
@@ -149,12 +150,13 @@ model ServiceGood {
   id              String  @id @default(auto()) @map("_id") @db.ObjectId
   goodId          String  @db.ObjectId
   serviceId       String  @db.ObjectId
-  good            Good    @relation(fields: [goodId], references: [id])
-  service         Service @relation(fields: [serviceId], references: [id])
+  good            Good    @relation(fields: [goodId], references: [id], onDelete: Cascade)
+  service         Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   goodCount       Int?    @default(0)
   containerNumber String?
   truckNumber     String?
 
+  @@unique([goodId, serviceId]) // Define a composite unique constraint here
   @@index([goodId], map: "good_idx")
   @@index([serviceId], map: "service_idx")
 }

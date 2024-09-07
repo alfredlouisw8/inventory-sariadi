@@ -20,24 +20,18 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
 	let result;
 
-	const { name, specification, packing, currentCount, remarks, customerId } =
-		data;
+	const { goodId, customerId } = data;
 
 	try {
-		result = await prisma.good.create({
-			data: {
-				name,
-				specification,
-				packing,
-				currentCount,
-				customerId,
-				remarks,
+		result = await prisma.good.delete({
+			where: {
+				id: goodId,
 			},
 		});
 	} catch (error: any) {
 		console.error(error.message);
 		return {
-			error: error.message || "Gagal menambah barang",
+			error: error.message || "Gagal menghapus jasa",
 		};
 	}
 
@@ -45,4 +39,4 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 	return { data: result };
 };
 
-export const createGood = createSafeAction(GoodSchema, handler);
+export const deleteGood = createSafeAction(GoodSchema, handler);

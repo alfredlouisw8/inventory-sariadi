@@ -11,30 +11,15 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "@/hooks/useAction";
 import { toast } from "@/components/ui/use-toast";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { CreateService } from "@/actions/services/createService/schema";
-import { format } from "date-fns";
-import { CalendarIcon, Check, ChevronsUpDown, Trash2 } from "lucide-react";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "../ui/select";
-import {
-	Good,
-	Service,
-	ServiceCalculationType,
-	ServiceType,
-} from "@prisma/client";
-import { serviceCalculationTypeText, serviceTypeText } from "@/utils/functions";
+import { Check, ChevronsUpDown } from "lucide-react";
+
+import { Good, Service } from "@prisma/client";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
 	Command,
@@ -45,8 +30,6 @@ import {
 	CommandList,
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
-import { Calendar } from "../ui/calendar";
-import { createService } from "@/actions/services/createService";
 import NumberInput from "../ui/number-input";
 import { CreateServiceGood } from "@/actions/serviceGoods/createServiceGoods/schema";
 import { createServiceGood } from "@/actions/serviceGoods/createServiceGoods";

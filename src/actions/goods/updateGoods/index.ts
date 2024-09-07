@@ -20,24 +20,33 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
 	let result;
 
-	const { name, specification, packing, currentCount, remarks, customerId } =
-		data;
+	const {
+		name,
+		specification,
+		packing,
+		currentCount,
+		remarks,
+		goodId,
+		customerId,
+	} = data;
 
 	try {
-		result = await prisma.good.create({
+		result = await prisma.good.update({
+			where: {
+				id: goodId,
+			},
 			data: {
 				name,
 				specification,
 				packing,
 				currentCount,
-				customerId,
 				remarks,
 			},
 		});
 	} catch (error: any) {
 		console.error(error.message);
 		return {
-			error: error.message || "Gagal menambah barang",
+			error: error.message || "Gagal merubah jasa",
 		};
 	}
 
@@ -45,4 +54,4 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 	return { data: result };
 };
 
-export const createGood = createSafeAction(GoodSchema, handler);
+export const updateGood = createSafeAction(GoodSchema, handler);

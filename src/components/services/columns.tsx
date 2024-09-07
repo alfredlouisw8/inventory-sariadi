@@ -2,9 +2,15 @@
 
 import { Service } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import {
+	ArrowUpDown,
+	EyeIcon,
+	MoreHorizontal,
+	PencilIcon,
+	Trash2,
+} from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -16,10 +22,27 @@ import {
 import Link from "next/link";
 import { format } from "date-fns";
 import { serviceCalculationTypeText, serviceTypeText } from "@/utils/functions";
+import EditServiceDialog from "./edit-service-dialog";
+import { ServiceWithGoods } from "@/utils/types";
+import DeleteServiceDialog from "./delete-service-dialog";
 
 // components/services/columns.tsx
 
-export const serviceColumns: ColumnDef<Service>[] = [
+export const serviceColumns: ColumnDef<ServiceWithGoods>[] = [
+	{
+		accessorKey: "serviceCode",
+		header: ({ column }) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				>
+					Kode Jasa
+					<ArrowUpDown className="ml-2 h-4 w-4" />
+				</Button>
+			);
+		},
+	},
 	{
 		accessorKey: "serviceType",
 		header: ({ column }) => {
@@ -35,22 +58,22 @@ export const serviceColumns: ColumnDef<Service>[] = [
 		},
 		cell: ({ row }) => serviceTypeText(row.original.serviceType),
 	},
-	{
-		accessorKey: "serviceCalculationType",
-		header: ({ column }) => {
-			return (
-				<Button
-					variant="ghost"
-					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-				>
-					Tambah/Kurang
-					<ArrowUpDown className="ml-2 h-4 w-4" />
-				</Button>
-			);
-		},
-		cell: ({ row }) =>
-			serviceCalculationTypeText(row.original.serviceCalculationType),
-	},
+	// {
+	// 	accessorKey: "serviceCalculationType",
+	// 	header: ({ column }) => {
+	// 		return (
+	// 			<Button
+	// 				variant="ghost"
+	// 				onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+	// 			>
+	// 				Tambah/Kurang
+	// 				<ArrowUpDown className="ml-2 h-4 w-4" />
+	// 			</Button>
+	// 		);
+	// 	},
+	// 	cell: ({ row }) =>
+	// 		serviceCalculationTypeText(row.original.serviceCalculationType),
+	// },
 	{
 		accessorKey: "date",
 		header: ({ column }) => {
@@ -82,22 +105,34 @@ export const serviceColumns: ColumnDef<Service>[] = [
 	},
 	{
 		id: "actions",
-		cell: ({ row }) => (
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="ghost" className="h-8 w-8 p-0">
-						<span className="sr-only">Open menu</span>
-						<MoreHorizontal className="h-4 w-4" />
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<DropdownMenuLabel>Actions</DropdownMenuLabel>
-					<DropdownMenuSeparator />
-					<DropdownMenuItem>
-						<Link href={`/services/${row.original.id}`}>Lihat detail</Link>
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
-		),
+		cell: ({ row }) => {
+			return (
+				<div className="flex items-center gap-3 justify-end">
+					<Link
+						href={`/services/${row.original.id}`}
+						className={buttonVariants({ size: "icon" })}
+					>
+						<EyeIcon className="h-4 w-4" />
+					</Link>
+					<EditServiceDialog
+						serviceData={row.original}
+						triggerComponent={
+							<Button variant="outline" size="icon">
+								<PencilIcon className=" h-4 w-4" />
+							</Button>
+						}
+					/>
+					<DeleteServiceDialog
+						serviceData={row.original}
+						triggerComponent={
+							<Button variant="destructive" size="icon">
+								<Trash2 className=" h-4 w-4" />
+							</Button>
+						}
+					/>
+				</div>
+			);
+		},
+		size: 200,
 	},
 ];

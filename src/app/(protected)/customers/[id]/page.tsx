@@ -21,7 +21,7 @@ export default async function CustomerDetailPage({
 	const customerDetailData = await getCustomerDetail(customerId);
 
 	if (!customerDetailData) {
-		return <div>Customer not found</div>;
+		return <div>Customer tidak ditemukan</div>;
 	}
 
 	const servicesData = customerDetailData.services;
@@ -36,23 +36,36 @@ export default async function CustomerDetailPage({
 		<>
 			<BackButton />
 			<div className="flex items-center justify-between">
-				<h1 className="text-lg font-semibold md:text-2xl">Customer Detail</h1>
+				<h1 className="text-lg font-semibold md:text-2xl">Detail Customer</h1>
 			</div>
 			<div className="flex rounded-lg shadow-sm ">
 				<div className="flex flex-col gap-5 w-full">
 					<div>
-						<p>Nama: {customerDetailData.name}</p>
-						<p>Perusahaan: {customerDetailData.company}</p>
-						<p>Keterangan: {customerDetailData.remarks}</p>
+						<p>
+							<b>Nama</b>: {customerDetailData.name}
+						</p>
+						<p>
+							<b>Perusahaan</b>: {customerDetailData.company}
+						</p>
+						<p>
+							<b>Keterangan</b>: {customerDetailData.remarks}
+						</p>
 					</div>
 
 					<div className="flex flex-col gap-3">
 						<div className="flex items-center justify-between">
 							<p className="text-xl font-bold">Jasa</p>
-							<AddServiceDialog customerId={customerId} goods={goodsData} />
+							<AddServiceDialog customerId={customerId} />
 						</div>
 						<div>
-							<DataTable columns={serviceColumns} data={servicesData} />
+							<DataTable
+								columns={serviceColumns}
+								data={servicesData}
+								filterColumn={{
+									label: "kode jasa",
+									name: "serviceCode",
+								}}
+							/>
 						</div>
 					</div>
 
@@ -62,7 +75,11 @@ export default async function CustomerDetailPage({
 							<AddGoodDialog customerId={customerId} />
 						</div>
 						<div>
-							<DataTable columns={goodColumns} data={goodsData} />
+							<DataTable
+								columns={goodColumns}
+								data={goodsData}
+								filterColumn={{ label: "nama barang", name: "name" }}
+							/>
 						</div>
 					</div>
 

@@ -27,7 +27,10 @@ import { Checkbox } from "../ui/checkbox";
 interface DataTableProps<TData extends { id: string }, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
-	filterColumn?: string;
+	filterColumn?: {
+		label: string;
+		name: string;
+	} | null;
 	showRowSelection?: boolean;
 	rowSelection?: string[];
 	setRowSelection?: (
@@ -38,7 +41,7 @@ interface DataTableProps<TData extends { id: string }, TValue> {
 export function DataTable<TData extends { id: string }, TValue>({
 	columns,
 	data,
-	filterColumn = "",
+	filterColumn,
 	showRowSelection = false,
 	rowSelection = [],
 	setRowSelection = () => {},
@@ -77,12 +80,16 @@ export function DataTable<TData extends { id: string }, TValue>({
 			{filterColumn && (
 				<div className="flex items-center py-4">
 					<Input
-						placeholder={`Filter ${filterColumn}`}
+						placeholder={`Cari ${filterColumn.label}`}
 						value={
-							(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""
+							(table
+								.getColumn(filterColumn.name)
+								?.getFilterValue() as string) ?? ""
 						}
 						onChange={(event) =>
-							table.getColumn(filterColumn)?.setFilterValue(event.target.value)
+							table
+								.getColumn(filterColumn.name)
+								?.setFilterValue(event.target.value)
 						}
 						className="max-w-sm"
 					/>
@@ -158,7 +165,7 @@ export function DataTable<TData extends { id: string }, TValue>({
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									Data tidak ditemukan
 								</TableCell>
 							</TableRow>
 						)}

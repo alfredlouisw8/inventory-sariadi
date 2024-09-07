@@ -13,7 +13,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
 	if (!session?.user) {
 		return {
-			error: "Unauthorized",
+			error: "Silahkan login",
 		};
 	}
 
