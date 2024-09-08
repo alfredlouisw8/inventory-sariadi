@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 
 import { createSafeAction } from "@/lib/create-safe-action";
 
-import { InputType, ReturnType } from "./types";
 import { auth } from "@/lib/auth/auth";
-import { CreateInvoice } from "./schema";
+import { InputType, ReturnType } from "../types";
+import { InvoiceSchema } from "../schema";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
 	const session = await auth();
@@ -17,7 +17,8 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 		};
 	}
 
-	const { invoiceId, paymentDate, tax, serviceIds, remarks, customerId } = data;
+	const { invoiceCode, paymentDate, tax, serviceIds, remarks, customerId } =
+		data;
 
 	try {
 		// Start a transaction to create an invoice and update services
@@ -25,7 +26,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 			// Create a new invoice
 			const invoice = await prisma.invoice.create({
 				data: {
-					invoiceId,
+					invoiceCode,
 					paymentDate,
 					tax,
 					remarks,
@@ -57,4 +58,4 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 	}
 };
 
-export const createInvoice = createSafeAction(CreateInvoice, handler);
+export const createInvoice = createSafeAction(InvoiceSchema, handler);

@@ -8,14 +8,12 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import InvoiceForm from "./form";
-import { Service } from "@prisma/client";
 
 type Props = {
 	customerId: string;
-	services: Service[];
 };
 
-export default function AddInvoiceDialog({ customerId, services }: Props) {
+export default function AddInvoiceDialog({ customerId }: Props) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -28,7 +26,7 @@ export default function AddInvoiceDialog({ customerId, services }: Props) {
 				<InvoiceForm
 					type="create"
 					customerId={customerId}
-					services={services}
+					successMessage="Invoice berhasil ditambahkan"
 				/>
 			</DialogContent>
 		</Dialog>

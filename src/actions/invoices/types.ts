@@ -3,7 +3,7 @@ import { Invoice } from "@prisma/client";
 
 import { ActionState } from "@/lib/create-safe-action";
 
-import { CreateInvoice } from "./schema";
+import { InvoiceSchema } from "./schema";
 
-export type InputType = z.infer<typeof CreateInvoice>;
+export type InputType = z.infer<typeof InvoiceSchema>;
 export type ReturnType = ActionState<InputType, Invoice>;

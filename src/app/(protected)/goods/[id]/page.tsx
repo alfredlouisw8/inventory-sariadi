@@ -47,6 +47,14 @@ export default async function GoodDetailPage({
 							<DataTable
 								columns={goodsWithServiceColumns}
 								data={goodDetail.serviceGoods}
+								filterColumn={{
+									label: "kode jasa",
+									name: "serviceCode",
+								}}
+								dateFilter={{
+									label: "tanggal jasa",
+									name: "service.date",
+								}}
 							/>
 						</div>
 					</div>

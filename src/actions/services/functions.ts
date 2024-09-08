@@ -10,11 +10,17 @@ export const revertInventoryChanges = (
 	serviceCalculationType: ServiceCalculationType,
 	serviceGoods: ServiceGood[]
 ): PrismaPromise<any>[] => {
+	// Only proceed with reverting if the calculation type is not "Equal"
+	if (serviceCalculationType === ServiceCalculationType.Equal) {
+		return []; // No transactions needed for "Equal" calculation type
+	}
+
 	const transactions: PrismaPromise<any>[] = [];
 
 	serviceGoods.forEach(({ goodId, goodCount }) => {
 		let revertCalculationType = {};
 
+		// Handle Add and Substract calculation types
 		switch (serviceCalculationType) {
 			case ServiceCalculationType.Add:
 				revertCalculationType = { decrement: goodCount };
@@ -26,7 +32,7 @@ export const revertInventoryChanges = (
 				break;
 		}
 
-		// Add revert operation to the transactions
+		// Push the update transaction to revert inventory changes
 		transactions.push(
 			prisma.good.update({
 				where: { id: goodId },

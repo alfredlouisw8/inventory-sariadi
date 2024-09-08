@@ -124,7 +124,7 @@ model Service {
 
 model Invoice {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  invoiceId   String    @unique
+  invoiceCode String    @unique
   paymentDate DateTime?
   remarks     String?
   tax         Boolean

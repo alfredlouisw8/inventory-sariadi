@@ -94,9 +94,15 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 			})
 		);
 
-		// 4. Apply the new calculation to the goods
-		goods.forEach(({ goodCount, goodId }) => {
+		// 4. Apply the new calculation to the goods, skipping if the type is `Equal`
+		const goodsUpdates = goods.reduce((acc, { goodCount, goodId }) => {
 			let calculationType = {};
+
+			// Skip calculation if serviceCalculationType is Equal
+			if (serviceCalculationType === ServiceCalculationType.Equal) {
+				return acc;
+			}
+
 			switch (serviceCalculationType) {
 				case ServiceCalculationType.Add:
 					calculationType = { increment: goodCount };
@@ -108,18 +114,21 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 					break;
 			}
 
-			transactions.push(
+			acc.push(
 				prisma.good.update({
 					where: { id: goodId },
-					data: {
-						currentCount: calculationType,
-					},
+					data: { currentCount: calculationType },
 				})
 			);
-		});
+
+			return acc;
+		}, [] as PrismaPromise<any>[]);
+
+		// 5. Combine all transactions (service update + goods updates)
+		const allTransactions = [...transactions, ...goodsUpdates];
 
 		// Run all transactions in a batch
-		const [service] = await prisma.$transaction(transactions);
+		const [service] = await prisma.$transaction(allTransactions);
 
 		// Revalidate the path after update
 		revalidatePath(`/customers/${customerId}`);

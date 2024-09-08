@@ -118,7 +118,7 @@ export const goodsWithServiceColumns: ColumnDef<GoodWithServiceData>[] = [
 	},
 	{
 		accessorKey: "service.date",
-		id: "serviceDate",
+		id: "service.date",
 		header: ({ column }) => (
 			<Button
 				variant="ghost"

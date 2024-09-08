@@ -10,7 +10,6 @@ import {
 	SortingState,
 	useReactTable,
 } from "@tanstack/react-table";
-
 import {
 	Table,
 	TableBody,
@@ -20,9 +19,11 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "../ui/checkbox";
+import { DateRange } from "react-day-picker";
+import { DatePickerWithRange } from "./date-range-picker";
 
 interface DataTableProps<TData extends { id: string }, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -31,6 +32,10 @@ interface DataTableProps<TData extends { id: string }, TValue> {
 		label: string;
 		name: string;
 	} | null;
+	dateFilter?: {
+		label: string;
+		name: string;
+	} | null; // New prop for date range filtering
 	showRowSelection?: boolean;
 	rowSelection?: string[];
 	setRowSelection?: (
@@ -38,21 +43,43 @@ interface DataTableProps<TData extends { id: string }, TValue> {
 	) => void;
 }
 
-export function DataTable<TData extends { id: string }, TValue>({
+export function DataTable<
+	TData extends { id: string; [key: string]: any },
+	TValue
+>({
 	columns,
 	data,
 	filterColumn,
+	dateFilter = null, // New date filter prop
 	showRowSelection = false,
 	rowSelection = [],
 	setRowSelection = () => {},
 }: DataTableProps<TData, TValue>) {
-	const [sorting, setSorting] = React.useState<SortingState>([]);
-	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-		[]
-	);
+	const [sorting, setSorting] = useState<SortingState>([]);
+	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+	const [dateRange, setDateRange] = useState<DateRange | undefined>();
+
+	// Helper function to get nested value
+	function getNestedValue(obj: any, path: string) {
+		return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+	}
+
+	// Memoize filtered data to avoid recalculating on every render
+	const filteredData = useMemo(() => {
+		if (!dateRange || !dateFilter) return data; // If no date filter, return all data
+
+		const { from, to } = dateRange;
+		if (!from || !to) return data; // If range is incomplete, return all data
+
+		// Filter data based on the selected date range
+		return data.filter((row) => {
+			const rowDate = new Date(getNestedValue(row, dateFilter.name)); // Use the helper to access nested dates
+			return rowDate >= from && rowDate <= to; // Check if date falls within the selected range
+		});
+	}, [data, dateRange, dateFilter]);
 
 	const table = useReactTable({
-		data,
+		data: filteredData, // Use filtered data
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 		onSortingChange: setSorting,
@@ -75,24 +102,41 @@ export function DataTable<TData extends { id: string }, TValue>({
 		});
 	};
 
+	console.log("table", table.getAllColumns());
+
+	const handleDateFilter = (range: DateRange | undefined) => {
+		setDateRange(range); // Set the selected date range
+	};
+
 	return (
 		<div className="w-full">
-			{filterColumn && (
-				<div className="flex items-center py-4">
-					<Input
-						placeholder={`Cari ${filterColumn.label}`}
-						value={
-							(table
-								.getColumn(filterColumn.name)
-								?.getFilterValue() as string) ?? ""
-						}
-						onChange={(event) =>
-							table
-								.getColumn(filterColumn.name)
-								?.setFilterValue(event.target.value)
-						}
-						className="max-w-sm"
-					/>
+			{(filterColumn || dateFilter) && (
+				<div className="flex items-center justify-between gap-4 py-4">
+					{filterColumn && (
+						<Input
+							placeholder={`Cari ${filterColumn.label}`}
+							value={
+								(table
+									.getColumn(filterColumn.name)
+									?.getFilterValue() as string) ?? ""
+							}
+							onChange={(event) =>
+								table
+									.getColumn(filterColumn.name)
+									?.setFilterValue(event.target.value)
+							}
+							className="max-w-sm"
+						/>
+					)}
+					{dateFilter && (
+						<div className="flex items-center gap-2">
+							<DatePickerWithRange
+								className="max-w-sm"
+								label={dateFilter.label}
+								onChange={handleDateFilter}
+							/>
+						</div>
+					)}
 				</div>
 			)}
 

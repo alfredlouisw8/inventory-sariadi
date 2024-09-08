@@ -7,8 +7,8 @@ import AddGoodDialog from "@/components/goods/add-good-dialog";
 import AddServiceDialog from "@/components/services/add-service-dialog";
 import BackButton from "@/components/back-button";
 import getInvoices from "@/actions/invoices/getInvoices";
-import { invoicesColumns } from "@/components/invoice/columns";
-import AddInvoiceDialog from "@/components/invoice/add-invoice-dialog";
+import { invoicesColumns } from "@/components/invoices/columns";
+import AddInvoiceDialog from "@/components/invoices/add-invoice-dialog";
 import { serviceColumns } from "@/components/services/columns";
 
 export default async function CustomerDetailPage({
@@ -27,10 +27,6 @@ export default async function CustomerDetailPage({
 	const servicesData = customerDetailData.services;
 	const goodsData = customerDetailData.goods;
 	const invoicesData = customerDetailData.invoices;
-
-	const unpaidServices = servicesData.filter(
-		(service) => service.invoiceId === null
-	);
 
 	return (
 		<>
@@ -65,6 +61,10 @@ export default async function CustomerDetailPage({
 									label: "kode jasa",
 									name: "serviceCode",
 								}}
+								dateFilter={{
+									label: "tanggal jasa",
+									name: "date",
+								}}
 							/>
 						</div>
 					</div>
@@ -86,13 +86,18 @@ export default async function CustomerDetailPage({
 					<div className="flex flex-col gap-3">
 						<div className="flex items-center justify-between">
 							<p className="text-xl font-bold">Invoice</p>
-							<AddInvoiceDialog
-								customerId={customerId}
-								services={unpaidServices}
-							/>
+							<AddInvoiceDialog customerId={customerId} />
 						</div>
 						<div>
-							<DataTable columns={invoicesColumns} data={invoicesData} />
+							<DataTable
+								columns={invoicesColumns}
+								data={invoicesData}
+								filterColumn={{ label: "nomor invoice", name: "invoiceCode" }}
+								dateFilter={{
+									label: "tanggal pembayaran",
+									name: "paymentDate",
+								}}
+							/>
 						</div>
 					</div>
 				</div>

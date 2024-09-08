@@ -245,7 +245,7 @@ export default function ServiceForm({
 														)}
 													>
 														{field.value ? (
-															format(field.value, "PPP")
+															format(field.value, "P")
 														) : (
 															<span>Pilih tanggal</span>
 														)}

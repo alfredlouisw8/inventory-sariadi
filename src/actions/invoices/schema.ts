@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-export const CreateInvoice = z.object({
-	invoiceId: z.string().min(1, {
+export const InvoiceSchema = z.object({
+	invoiceCode: z.string().min(1, {
 		message: "Harus diisi",
 	}),
 	customerId: z.string(),
@@ -9,4 +9,5 @@ export const CreateInvoice = z.object({
 	remarks: z.string(),
 	tax: z.boolean(),
 	serviceIds: z.array(z.string()),
+	invoiceId: z.string(),
 });
