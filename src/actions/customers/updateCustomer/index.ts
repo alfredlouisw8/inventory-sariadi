@@ -8,6 +8,8 @@ import { auth } from "@/lib/auth/auth";
 import prisma from "@/lib/prisma";
 import { CustomerSchema } from "../schema";
 import { InputType, ReturnType } from "../types";
+import { createLogEntry, generateLogMessage } from "@/actions/logs/functions";
+import { LogAction, LogObject } from "@prisma/client";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
 	const session = await auth();
@@ -23,15 +25,36 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 	const { name, company, remarks, customerId } = data;
 
 	try {
-		result = await prisma.customer.update({
-			data: {
-				name,
-				company,
-				remarks,
-			},
-			where: {
-				id: customerId,
-			},
+		result = await prisma.$transaction(async (prisma) => {
+			const customer = await prisma.customer.update({
+				data: {
+					name,
+					company,
+					remarks,
+				},
+				where: {
+					id: customerId,
+				},
+			});
+
+			// Generate a log for this action
+			const logMessage = generateLogMessage(
+				session.user.name as string,
+				LogAction.Update,
+				LogObject.Customer,
+				"customer",
+				customer.name,
+				true
+			);
+			await createLogEntry(
+				session.user.id as string,
+				LogAction.Update,
+				LogObject.Customer,
+				customer.id,
+				logMessage
+			);
+
+			return customer;
 		});
 	} catch (error: any) {
 		console.error(error.message);

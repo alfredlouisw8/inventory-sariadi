@@ -1,14 +1,16 @@
 import getCustomers from "@/actions/customers/getCustomers";
+import getLogs from "@/actions/logs/getLogs";
 import BackButton from "@/components/back-button";
 import AddCustomerDialog from "@/components/customers/add-customer-dialog";
 import { customerColumns } from "@/components/customers/columns";
+import { logsColumns } from "@/components/logs/columns";
 import { DataTable } from "@/components/ui/data-table";
 
 export default async function LogsPage() {
-	const data = await getCustomers();
+	const data = await getLogs();
 	const filterColumn = {
-		label: "nama",
-		name: "name",
+		label: "log",
+		name: "details",
 	};
 
 	return (
@@ -18,7 +20,7 @@ export default async function LogsPage() {
 			</div>
 			<div className="flex rounded-lg shadow-sm" x-chunk="dashboard-02-chunk-1">
 				<DataTable
-					columns={customerColumns}
+					columns={logsColumns}
 					data={data}
 					filterColumn={filterColumn}
 				/>

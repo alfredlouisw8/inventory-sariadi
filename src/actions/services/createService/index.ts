@@ -5,6 +5,8 @@ import { createSafeAction } from "@/lib/create-safe-action";
 import { auth } from "@/lib/auth/auth";
 import prisma from "@/lib/prisma";
 import {
+	LogAction,
+	LogObject,
 	PrismaPromise,
 	ServiceCalculationType,
 	ServiceType,
@@ -12,6 +14,11 @@ import {
 import { InputType, ReturnType } from "../types";
 import { ServiceSchema } from "../schema";
 import { generateServiceCode } from "../functions";
+import {
+	createLogEntry,
+	createLogEntrySync,
+	generateLogMessage,
+} from "@/actions/logs/functions";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
 	const session = await auth();
@@ -100,10 +107,27 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 			return acc;
 		}, [] as PrismaPromise<any>[]);
 
+		// Generate a log for this action
+		const logMessage = generateLogMessage(
+			session.user.name as string,
+			LogAction.Create,
+			LogObject.Service,
+			serviceCode,
+			customer?.name as string
+		);
+		const logEntry = createLogEntrySync(
+			session.user.id as string,
+			LogAction.Create,
+			LogObject.Service,
+			customerId,
+			logMessage
+		);
+
 		// Execute the transaction with the service creation and goods updates
 		const [service] = await prisma.$transaction([
 			servicePromise,
 			...goodsUpdates,
+			logEntry,
 		]);
 
 		// Revalidate the cache after successful operations

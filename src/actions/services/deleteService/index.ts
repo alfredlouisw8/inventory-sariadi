@@ -6,8 +6,12 @@ import { auth } from "@/lib/auth/auth";
 import prisma from "@/lib/prisma";
 import { InputType, ReturnType } from "../types";
 import { ServiceSchema } from "../schema";
-import { PrismaPromise } from "@prisma/client";
+import { LogAction, LogObject, PrismaPromise } from "@prisma/client";
 import { revertInventoryChanges } from "../functions";
+import {
+	createLogEntrySync,
+	generateLogMessage,
+} from "@/actions/logs/functions";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
 	const session = await auth();
@@ -49,6 +53,29 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 				},
 			})
 		);
+
+		const customer = await prisma.customer.findUnique({
+			where: {
+				id: service.customerId,
+			},
+		});
+
+		const logMessage = generateLogMessage(
+			session.user.name as string,
+			LogAction.Delete,
+			LogObject.Service,
+			service.serviceCode,
+			customer?.name as string
+		);
+		const logEntry = createLogEntrySync(
+			session.user.id as string,
+			LogAction.Create,
+			LogObject.Service,
+			customer?.id as string,
+			logMessage
+		);
+
+		transactions.push(logEntry);
 
 		// 4. Execute all the transactions
 		const [deletedService] = await prisma.$transaction(transactions);

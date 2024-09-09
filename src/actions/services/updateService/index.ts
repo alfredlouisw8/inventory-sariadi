@@ -5,6 +5,8 @@ import { createSafeAction } from "@/lib/create-safe-action";
 import { auth } from "@/lib/auth/auth";
 import prisma from "@/lib/prisma";
 import {
+	LogAction,
+	LogObject,
 	PrismaPromise,
 	ServiceCalculationType,
 	ServiceType,
@@ -12,6 +14,10 @@ import {
 import { InputType, ReturnType } from "../types";
 import { ServiceSchema } from "../schema";
 import { revertInventoryChanges } from "../functions";
+import {
+	createLogEntrySync,
+	generateLogMessage,
+} from "@/actions/logs/functions";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
 	const session = await auth();
@@ -124,8 +130,30 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 			return acc;
 		}, [] as PrismaPromise<any>[]);
 
+		const customer = await prisma.customer.findUnique({
+			where: {
+				id: previousService.customerId,
+			},
+		});
+
+		const logMessage = generateLogMessage(
+			session.user.name as string,
+			LogAction.Update,
+			LogObject.Service,
+			previousService.serviceCode,
+			customer?.name as string
+		);
+
+		const logEntry = createLogEntrySync(
+			session.user.id as string,
+			LogAction.Update,
+			LogObject.Service,
+			customer?.id as string,
+			logMessage
+		);
+
 		// 5. Combine all transactions (service update + goods updates)
-		const allTransactions = [...transactions, ...goodsUpdates];
+		const allTransactions = [...transactions, ...goodsUpdates, logEntry];
 
 		// Run all transactions in a batch
 		const [service] = await prisma.$transaction(allTransactions);

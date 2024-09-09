@@ -28,6 +28,7 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Log       Log[]
 }
 
 enum Role {
@@ -106,6 +107,7 @@ model Customer {
   services Service[]
   goods    Good[]
   invoices Invoice[]
+  Log      Log[]
 }
 
 model Service {
@@ -180,11 +182,29 @@ model ServiceGood {
 }
 
 model Log {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  text String
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  action    LogAction
+  object    LogObject
+  details   String // The log message
+  createdAt DateTime  @default(now())
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  userId     String   @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id])
+  customerId String   @db.ObjectId
+  customer   Customer @relation(fields: [userId], references: [id])
+}
+
+enum LogObject {
+  Service
+  Customer
+  Good
+  Invoice
+}
+
+enum LogAction {
+  Create
+  Update
+  Delete
 }
 
 enum ServiceType {

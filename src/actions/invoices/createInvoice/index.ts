@@ -7,6 +7,8 @@ import { createSafeAction } from "@/lib/create-safe-action";
 import { auth } from "@/lib/auth/auth";
 import { InputType, ReturnType } from "../types";
 import { InvoiceSchema } from "../schema";
+import { createLogEntry, generateLogMessage } from "@/actions/logs/functions";
+import { LogAction, LogObject } from "@prisma/client";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
 	const session = await auth();
@@ -42,6 +44,31 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 						data: { invoiceId: invoice.id }, // Use the newly created invoice's ID here
 					})
 				)
+			);
+
+			const customer = await prisma.customer.findUnique({
+				where: {
+					id: customerId,
+				},
+				select: {
+					name: true,
+				},
+			});
+
+			// Generate a log for this action
+			const logMessage = generateLogMessage(
+				session.user.name as string,
+				LogAction.Create,
+				LogObject.Invoice,
+				invoice.invoiceCode,
+				customer?.name as string
+			);
+			await createLogEntry(
+				session.user.id as string,
+				LogAction.Create,
+				LogObject.Invoice,
+				customerId,
+				logMessage
 			);
 
 			return [invoice, ...serviceUpdates];
