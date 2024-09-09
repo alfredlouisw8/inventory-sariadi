@@ -87,6 +87,8 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
 		// Revalidate the cache after successful operations
 		revalidatePath(`/customers/${customerId}`);
+		revalidatePath(`/invoices/${invoiceId}`);
+
 		return { data: updatedInvoice };
 	} catch (error: any) {
 		console.error(error.message);

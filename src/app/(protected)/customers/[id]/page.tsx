@@ -10,6 +10,10 @@ import getInvoices from "@/actions/invoices/getInvoices";
 import { invoicesColumns } from "@/components/invoices/columns";
 import AddInvoiceDialog from "@/components/invoices/add-invoice-dialog";
 import { serviceColumns } from "@/components/services/columns";
+import { Button } from "@/components/ui/button";
+import { PencilIcon, Trash2 } from "lucide-react";
+import EditCustomerDialog from "@/components/customers/edit-customer-dialog";
+import DeleteCustomerDialog from "@/components/customers/delete-customer-dialog";
 
 export default async function CustomerDetailPage({
 	params,
@@ -33,6 +37,24 @@ export default async function CustomerDetailPage({
 			<BackButton />
 			<div className="flex items-center justify-between">
 				<h1 className="text-lg font-semibold md:text-2xl">Detail Customer</h1>
+				<div className="flex items-center gap-2">
+					<EditCustomerDialog
+						customerData={customerDetailData}
+						triggerComponent={
+							<Button variant="outline" size="icon">
+								<PencilIcon className=" h-4 w-4" />
+							</Button>
+						}
+					/>
+					<DeleteCustomerDialog
+						customerData={customerDetailData}
+						triggerComponent={
+							<Button variant="destructive" size="icon">
+								<Trash2 className=" h-4 w-4" />
+							</Button>
+						}
+					/>
+				</div>
 			</div>
 			<div className="flex rounded-lg shadow-sm ">
 				<div className="flex flex-col gap-5 w-full">

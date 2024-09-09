@@ -33,6 +33,7 @@ import { InvoiceWithServices, ServiceWithGoods } from "@/utils/types";
 import { updateInvoice } from "@/actions/invoices/updateInvoice";
 import { deleteInvoice } from "@/actions/invoices/deleteInvoice";
 import { invoiceServicesColumns } from "./columns";
+import { useRouter } from "next/navigation";
 
 type Props = {
 	type: "create" | "update" | "delete";
@@ -77,12 +78,22 @@ export default function InvoiceForm({
 		delete: deleteInvoice,
 	};
 
+	const router = useRouter();
+
 	const { execute, fieldErrors } = useAction(action[type], {
 		onSuccess: () => {
 			toast({
 				title: successMessage,
 			});
 			closeDialogRef.current?.click();
+
+			if (
+				window.location.pathname.startsWith("/invoices") &&
+				type === "delete"
+			) {
+				// Navigate to the customer detail page
+				router.replace(`/customers/${customerId}`);
+			}
 		},
 		onError: (error) => {
 			toast({

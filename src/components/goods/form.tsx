@@ -24,6 +24,7 @@ import { GoodSchema } from "@/actions/goods/schema";
 import { updateGood } from "@/actions/goods/updateGoods";
 import { deleteGood } from "@/actions/goods/deleteGoods";
 import { Good } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
 type Props = {
 	type: "create" | "update" | "delete";
@@ -61,12 +62,19 @@ export default function GoodForm({
 		delete: deleteGood,
 	};
 
+	const router = useRouter();
+
 	const { execute, fieldErrors } = useAction(action[type], {
 		onSuccess: () => {
 			toast({
 				title: successMessage,
 			});
 			closeDialogRef.current?.click();
+
+			if (window.location.pathname.startsWith("/goods") && type === "delete") {
+				// Navigate to the customer detail page
+				router.replace(`/customers/${customerId}`);
+			}
 		},
 		onError: (error) => {
 			toast({

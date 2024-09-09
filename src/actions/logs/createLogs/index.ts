@@ -7,7 +7,7 @@ import { createSafeAction } from "@/lib/create-safe-action";
 import { auth } from "@/lib/auth/auth";
 import prisma from "@/lib/prisma";
 import { InputType, ReturnType } from "../types";
-import { GoodSchema } from "../schema";
+import { LogSchema } from "../schema";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
 	const session = await auth();
@@ -20,40 +20,23 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
 	let result;
 
-	const {
-		name,
-		specification,
-		packing,
-		currentCount,
-		remarks,
-		goodId,
-		customerId,
-	} = data;
+	const { logText } = data;
 
 	try {
-		result = await prisma.good.update({
-			where: {
-				id: goodId,
-			},
+		result = await prisma.log.create({
 			data: {
-				name,
-				specification,
-				packing,
-				currentCount,
-				remarks,
+				text: logText,
 			},
 		});
 	} catch (error: any) {
 		console.error(error.message);
 		return {
-			error: error.message || "Gagal merubah jasa",
+			error: error.message || "Gagal menambah logs.",
 		};
 	}
 
-	revalidatePath(`/customers/${customerId}`);
-	revalidatePath(`/goods/${goodId}`);
-
+	revalidatePath(`/logs`);
 	return { data: result };
 };
 
-export const updateGood = createSafeAction(GoodSchema, handler);
+export const createLog = createSafeAction(LogSchema, handler);

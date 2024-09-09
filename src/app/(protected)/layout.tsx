@@ -4,6 +4,7 @@ import {
 	CircleUser,
 	Home,
 	LineChart,
+	Logs,
 	Menu,
 	Package,
 	Package2,
@@ -43,6 +44,11 @@ export default async function DashboardLayout({
 			title: "Customers",
 			link: "/customers",
 			icon: <Users className="h-4 w-4" />,
+		},
+		{
+			title: "Logs",
+			link: "/logs",
+			icon: <Logs className="h-4 w-4" />,
 		},
 	];
 

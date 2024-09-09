@@ -51,6 +51,7 @@ import { createService } from "@/actions/services/createService";
 import { ServiceWithGoods } from "@/utils/types";
 import { updateService } from "@/actions/services/updateService";
 import { deleteService } from "@/actions/services/deleteService";
+import { useRouter } from "next/navigation";
 
 type Props = {
 	type: "create" | "update" | "delete";
@@ -112,6 +113,8 @@ export default function ServiceForm({
 		}
 	}, [customerId]);
 
+	const router = useRouter();
+
 	const { fields, append, remove } = useFieldArray({
 		control: form.control,
 		name: "goods",
@@ -129,6 +132,14 @@ export default function ServiceForm({
 				title: successMessage,
 			});
 			closeDialogRef.current?.click();
+
+			if (
+				window.location.pathname.startsWith("/services") &&
+				type === "delete"
+			) {
+				// Navigate to the customer detail page
+				router.replace(`/customers/${customerId}`);
+			}
 		},
 		onError: (error) => {
 			toast({

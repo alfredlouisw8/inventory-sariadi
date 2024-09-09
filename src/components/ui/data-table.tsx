@@ -102,8 +102,6 @@ export function DataTable<
 		});
 	};
 
-	console.log("table", table.getAllColumns());
-
 	const handleDateFilter = (range: DateRange | undefined) => {
 		setDateRange(range); // Set the selected date range
 	};

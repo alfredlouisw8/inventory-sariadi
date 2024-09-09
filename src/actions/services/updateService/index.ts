@@ -132,6 +132,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
 		// Revalidate the path after update
 		revalidatePath(`/customers/${customerId}`);
+		revalidatePath(`/services/${serviceId}`);
 		return { data: service };
 	} catch (error: any) {
 		console.error(error.message);

@@ -23,6 +23,7 @@ import { Customer } from "@prisma/client";
 import { CustomerSchema } from "@/actions/customers/schema";
 import { updateCustomer } from "@/actions/customers/updateCustomer";
 import { deleteCustomer } from "@/actions/customers/deleteCustomer";
+import { useRouter } from "next/navigation";
 
 type Props = {
 	customerData?: Customer;
@@ -55,12 +56,19 @@ export default function CustomerForm({
 		delete: deleteCustomer,
 	};
 
+	const router = useRouter();
+
 	const { execute, fieldErrors } = useAction(actions[type], {
 		onSuccess: () => {
 			toast({
 				title: successMessage,
 			});
 			closeDialogRef.current?.click();
+
+			if (type === "delete") {
+				// Navigate to the customers page
+				router.replace(`/customers`);
+			}
 		},
 		onError: (error) => {
 			toast({

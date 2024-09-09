@@ -100,6 +100,9 @@ model Customer {
   company String?
   remarks String?
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   services Service[]
   goods    Good[]
   invoices Invoice[]
@@ -107,7 +110,7 @@ model Customer {
 
 model Service {
   id                     String                 @id @default(auto()) @map("_id") @db.ObjectId
-  serviceCode            String
+  serviceCode            String                 @unique
   serviceType            ServiceType
   serviceCalculationType ServiceCalculationType
   date                   DateTime
@@ -115,11 +118,15 @@ model Service {
   remarks                String?
   buyPrice               Int?                   @default(0)
   sellPrice              Int?                   @default(0)
-  customer               Customer               @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  customerId             String                 @db.ObjectId
-  invoice                Invoice?               @relation(fields: [invoiceId], references: [id])
-  invoiceId              String?                @db.ObjectId
-  serviceGoods           ServiceGood[]          @relation(fields: [], references: [])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customer     Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId   String        @db.ObjectId
+  invoice      Invoice?      @relation(fields: [invoiceId], references: [id])
+  invoiceId    String?       @db.ObjectId
+  serviceGoods ServiceGood[] @relation(fields: [], references: [])
 }
 
 model Invoice {
@@ -129,27 +136,38 @@ model Invoice {
   remarks     String?
   tax         Boolean
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   services   Service[]
   customer   Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId String    @db.ObjectId
 }
 
 model Good {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   specification String?
   packing       String?
   remarks       String?
-  currentCount  Int           @default(0)
-  serviceGoods  ServiceGood[] @relation(fields: [], references: [])
-  customer      Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  customerId    String        @db.ObjectId
+  currentCount  Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  serviceGoods ServiceGood[] @relation(fields: [], references: [])
+  customer     Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId   String        @db.ObjectId
 }
 
 model ServiceGood {
-  id              String  @id @default(auto()) @map("_id") @db.ObjectId
-  goodId          String  @db.ObjectId
-  serviceId       String  @db.ObjectId
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  goodId    String @db.ObjectId
+  serviceId String @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   good            Good    @relation(fields: [goodId], references: [id], onDelete: Cascade)
   service         Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   goodCount       Int?    @default(0)
@@ -164,6 +182,9 @@ model ServiceGood {
 model Log {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
   text String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum ServiceType {
