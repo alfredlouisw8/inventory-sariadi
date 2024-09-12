@@ -8,4 +8,5 @@ export const CreateServiceGood = z.object({
 	goodCount: z.number(),
 	containerNumber: z.string(),
 	truckNumber: z.string(),
+	customerId: z.string(),
 });

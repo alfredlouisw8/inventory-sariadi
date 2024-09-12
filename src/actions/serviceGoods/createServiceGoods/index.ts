@@ -26,6 +26,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 		containerNumber,
 		truckNumber,
 		serviceCalculationType,
+		customerId,
 	} = data;
 
 	let result;
@@ -39,6 +40,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 					goodCount,
 					containerNumber, // Adjust based on your input
 					truckNumber, // Adjust based on your input
+					customerId,
 				},
 			}),
 
