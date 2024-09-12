@@ -14,6 +14,11 @@ import { Button } from "@/components/ui/button";
 import { PencilIcon, Trash2 } from "lucide-react";
 import EditCustomerDialog from "@/components/customers/edit-customer-dialog";
 import DeleteCustomerDialog from "@/components/customers/delete-customer-dialog";
+import { CSVLink, CSVDownload } from "react-csv";
+import ExportCSV from "@/components/export-csv";
+import { exportServicesData } from "@/actions/services/exportServices";
+import { exportInvoicesData } from "@/actions/invoices/exportInvoices";
+import { exportGoodsData } from "@/actions/goods/exportGoods";
 
 export default async function CustomerDetailPage({
 	params,
@@ -31,6 +36,10 @@ export default async function CustomerDetailPage({
 	const servicesData = customerDetailData.services;
 	const goodsData = customerDetailData.goods;
 	const invoicesData = customerDetailData.invoices;
+
+	const servicesDataCsv = await exportServicesData(customerId);
+	const invoicesDataCsv = await exportInvoicesData(customerId);
+	const goodsDataCsv = await exportGoodsData(customerId);
 
 	return (
 		<>
@@ -73,7 +82,11 @@ export default async function CustomerDetailPage({
 					<div className="flex flex-col gap-3">
 						<div className="flex items-center justify-between">
 							<p className="text-xl font-bold">Jasa</p>
-							<AddServiceDialog customerId={customerId} />
+
+							<div className="flex items-center gap-2">
+								<ExportCSV data={servicesDataCsv} fileName="jasa.csv" />
+								<AddServiceDialog customerId={customerId} />
+							</div>
 						</div>
 						<div>
 							<DataTable
@@ -94,7 +107,10 @@ export default async function CustomerDetailPage({
 					<div className="flex flex-col gap-3">
 						<div className="flex items-center justify-between">
 							<p className="text-xl font-bold">Barang</p>
-							<AddGoodDialog customerId={customerId} />
+							<div className="flex items-center gap-2">
+								<ExportCSV data={goodsDataCsv} fileName="barang.csv" />
+								<AddGoodDialog customerId={customerId} />
+							</div>
 						</div>
 						<div>
 							<DataTable
@@ -108,7 +124,11 @@ export default async function CustomerDetailPage({
 					<div className="flex flex-col gap-3">
 						<div className="flex items-center justify-between">
 							<p className="text-xl font-bold">Invoice</p>
-							<AddInvoiceDialog customerId={customerId} />
+
+							<div className="flex items-center gap-2">
+								<ExportCSV data={invoicesDataCsv} fileName="invoice.csv" />
+								<AddInvoiceDialog customerId={customerId} />
+							</div>
 						</div>
 						<div>
 							<DataTable

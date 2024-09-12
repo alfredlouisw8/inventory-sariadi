@@ -22,8 +22,6 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
 	let result;
 
-	console.log("session", session);
-
 	const { name, company, remarks } = data;
 
 	try {

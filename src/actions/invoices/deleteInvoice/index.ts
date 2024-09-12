@@ -7,7 +7,7 @@ import prisma from "@/lib/prisma";
 import { InputType, ReturnType } from "../types";
 import { InvoiceSchema } from "../schema";
 import { createLogEntry, generateLogMessage } from "@/actions/logs/functions";
-import { LogAction, LogObject } from "@prisma/client";
+import { LogAction, LogObject, Role } from "@prisma/client";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
 	const session = await auth();
@@ -15,6 +15,12 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 	if (!session?.user) {
 		return {
 			error: "Silahkan login",
+		};
+	}
+
+	if (session.user.role !== Role.SUPER_ADMIN) {
+		return {
+			error: "Anda tidak punya akses",
 		};
 	}
 

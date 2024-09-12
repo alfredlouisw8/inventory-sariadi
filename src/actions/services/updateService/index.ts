@@ -8,6 +8,7 @@ import {
 	LogAction,
 	LogObject,
 	PrismaPromise,
+	Role,
 	ServiceCalculationType,
 	ServiceType,
 } from "@prisma/client";
@@ -25,6 +26,12 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 	if (!session?.user) {
 		return {
 			error: "Silahkan login",
+		};
+	}
+
+	if (session.user.role === Role.USER) {
+		return {
+			error: "Anda tidak punya akses",
 		};
 	}
 

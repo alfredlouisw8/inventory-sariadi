@@ -4,6 +4,8 @@ import {
 	ServiceGood,
 } from "@prisma/client";
 import prisma from "@/lib/prisma";
+import { serviceTypeText } from "@/utils/functions";
+import { format } from "date-fns";
 
 // Function to revert inventory changes
 export const revertInventoryChanges = (
@@ -75,3 +77,4 @@ export async function generateServiceCode(name: string): Promise<string> {
 	// Generate the new service code
 	return `${prefix}${String(nextCodeNumber).padStart(3, "0")}`;
 }
+

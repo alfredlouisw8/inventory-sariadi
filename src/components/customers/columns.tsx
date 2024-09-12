@@ -11,14 +11,7 @@ import {
 } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import Link from "next/link";
 import EditCustomerDialog from "./edit-customer-dialog";
 import DeleteCustomerDialog from "./delete-customer-dialog";

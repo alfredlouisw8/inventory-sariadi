@@ -69,6 +69,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 							goodCount,
 							containerNumber,
 							truckNumber,
+							customerId,
 						})
 					),
 				},
