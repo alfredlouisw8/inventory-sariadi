@@ -35,6 +35,8 @@ export default function Error({
 			});
 		}
 
+		console.log("error", error);
+
 		if (process.env.NEXT_PUBLIC_HONEYBADGER_REPORT_ERROR) {
 			Honeybadger.notify(error);
 		}
