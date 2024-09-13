@@ -1,5 +1,7 @@
 "use server";
 
+import prisma from "@/lib/prisma";
+
 export async function exportGoodsData(customerId: string) {
 	let data: any[] = [];
 

@@ -1,8 +1,9 @@
 "use server";
 
 import { serviceTypeText } from "@/utils/functions";
-import { Honeybadger } from "@honeybadger-io/react";
 import { format } from "date-fns";
+
+import prisma from "@/lib/prisma";
 
 export async function exportServicesData(customerId: string) {
 	let data: any[] = [];

@@ -3,6 +3,8 @@
 import { serviceTypeText } from "@/utils/functions";
 import { format } from "date-fns";
 
+import prisma from "@/lib/prisma";
+
 export async function exportInvoicesData(customerId: string) {
 	let data: any[] = [];
 
