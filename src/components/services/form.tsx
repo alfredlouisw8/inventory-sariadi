@@ -417,13 +417,13 @@ export default function ServiceForm({
 									<FormControl>
 										<Input
 											{...form.register(`goods.${index}.containerNumber`)}
-											placeholder="Container Number"
+											placeholder="No container"
 										/>
 									</FormControl>
 									<FormControl>
 										<Input
 											{...form.register(`goods.${index}.truckNumber`)}
-											placeholder="Truck Number"
+											placeholder="No truk"
 										/>
 									</FormControl>
 									<Button

@@ -9,7 +9,7 @@ Honeybadger.configure({
 		process.env.NODE_ENV,
 	revision: process.env.NEXT_PUBLIC_HONEYBADGER_REVISION,
 	projectRoot: "webpack:///./",
-	// debug: true,
+	debug: true,
 	reportData:
 		Boolean(process.env.NEXT_PUBLIC_HONEYBADGER_REPORT_ERROR) || false,
 }).beforeNotify((notice) => {

@@ -9,6 +9,7 @@ import { InputType, ReturnType } from "../types";
 import { InvoiceSchema } from "../schema";
 import { createLogEntry, generateLogMessage } from "@/actions/logs/functions";
 import { LogAction, LogObject } from "@prisma/client";
+import prisma from "@/lib/prisma";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
 	const session = await auth();
