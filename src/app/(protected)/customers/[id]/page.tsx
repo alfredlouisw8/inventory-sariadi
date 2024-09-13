@@ -37,10 +37,6 @@ export default async function CustomerDetailPage({
 	const goodsData = customerDetailData.goods;
 	const invoicesData = customerDetailData.invoices;
 
-	const servicesDataCsv = await exportServicesData(customerId);
-	const invoicesDataCsv = await exportInvoicesData(customerId);
-	const goodsDataCsv = await exportGoodsData(customerId);
-
 	return (
 		<>
 			<BackButton />
@@ -84,7 +80,10 @@ export default async function CustomerDetailPage({
 							<p className="text-xl font-bold">Jasa</p>
 
 							<div className="flex items-center gap-2">
-								<ExportCSV data={servicesDataCsv} fileName="jasa.csv" />
+								<ExportCSV
+									url={`/api/services/export?customerId=${customerId}`}
+									fileName="jasa.csv"
+								/>
 								<AddServiceDialog customerId={customerId} />
 							</div>
 						</div>
@@ -108,7 +107,10 @@ export default async function CustomerDetailPage({
 						<div className="flex items-center justify-between">
 							<p className="text-xl font-bold">Barang</p>
 							<div className="flex items-center gap-2">
-								<ExportCSV data={goodsDataCsv} fileName="barang.csv" />
+								<ExportCSV
+									url={`/api/goods/export?customerId=${customerId}`}
+									fileName="barang.csv"
+								/>
 								<AddGoodDialog customerId={customerId} />
 							</div>
 						</div>
@@ -126,7 +128,10 @@ export default async function CustomerDetailPage({
 							<p className="text-xl font-bold">Invoice</p>
 
 							<div className="flex items-center gap-2">
-								<ExportCSV data={invoicesDataCsv} fileName="invoice.csv" />
+								<ExportCSV
+									url={`/api/invoices/export?customerId=${customerId}`}
+									fileName="invoice.csv"
+								/>
 								<AddInvoiceDialog customerId={customerId} />
 							</div>
 						</div>

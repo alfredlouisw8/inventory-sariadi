@@ -4,13 +4,25 @@ import React from "react";
 import { Button } from "./ui/button";
 
 type Props = {
-	data: any[];
+	url: string;
 	fileName?: string;
 };
 
-const ExportCSV = ({ data, fileName }: Props) => {
-	const downloadCSV = () => {
+const ExportCSV = ({ url, fileName }: Props) => {
+	const [isLoading, setIsLoading] = React.useState(false);
+
+	async function fetchData() {
+		setIsLoading(true);
+		const response = await fetch(url);
+		const data = await response.json();
+		setIsLoading(false);
+		return data;
+	}
+
+	const downloadCSV = async () => {
 		// Convert the data array into a CSV string
+
+		const { data } = await fetchData();
 
 		// Step 1: Get the headers from the keys of the first object in the array
 		const headers = Object.keys(data[0]);
@@ -18,7 +30,7 @@ const ExportCSV = ({ data, fileName }: Props) => {
 		// Step 2: Map the data into CSV format by extracting the values dynamically
 		const csvString = [
 			headers, // Use the headers dynamically extracted from the keys
-			...data.map((item) => headers.map((header) => item[header])), // Map the values based on headers
+			...data.map((item: any) => headers.map((header) => item[header])), // Map the values based on headers
 		];
 
 		// Step 3: Convert the array of arrays into a CSV string
@@ -38,7 +50,11 @@ const ExportCSV = ({ data, fileName }: Props) => {
 		URL.revokeObjectURL(url);
 	};
 
-	return <Button onClick={downloadCSV}>Export</Button>;
+	return (
+		<Button loading={isLoading} onClick={downloadCSV}>
+			Export
+		</Button>
+	);
 };
 
 export default ExportCSV;
