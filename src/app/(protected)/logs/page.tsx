@@ -13,6 +13,11 @@ export default async function LogsPage() {
 		name: "details",
 	};
 
+	const dateFilter = {
+		label: "tanggal",
+		name: "createdAt",
+	};
+
 	return (
 		<>
 			<div className="flex items-center justify-between">
@@ -23,6 +28,7 @@ export default async function LogsPage() {
 					columns={logsColumns}
 					data={data}
 					filterColumn={filterColumn}
+					dateFilter={dateFilter}
 				/>
 			</div>
 		</>

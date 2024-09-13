@@ -7,6 +7,7 @@ import {
 	getCoreRowModel,
 	getFilteredRowModel,
 	getSortedRowModel,
+	getPaginationRowModel, // Add pagination row model
 	SortingState,
 	useReactTable,
 } from "@tanstack/react-table";
@@ -19,7 +20,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "../ui/checkbox";
 import { DateRange } from "react-day-picker";
@@ -50,7 +51,7 @@ export function DataTable<
 	columns,
 	data,
 	filterColumn,
-	dateFilter = null, // New date filter prop
+	dateFilter = null,
 	showRowSelection = false,
 	rowSelection = [],
 	setRowSelection = () => {},
@@ -58,6 +59,8 @@ export function DataTable<
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [dateRange, setDateRange] = useState<DateRange | undefined>();
+	const [pageIndex, setPageIndex] = useState(0); // Add pagination state
+	const [pageSize, setPageSize] = useState(10); // Number of rows per page
 
 	// Helper function to get nested value
 	function getNestedValue(obj: any, path: string) {
@@ -86,9 +89,22 @@ export function DataTable<
 		getSortedRowModel: getSortedRowModel(),
 		onColumnFiltersChange: setColumnFilters,
 		getFilteredRowModel: getFilteredRowModel(),
+		getPaginationRowModel: getPaginationRowModel(), // Enable pagination
 		state: {
 			sorting,
 			columnFilters,
+			pagination: {
+				pageIndex,
+				pageSize,
+			},
+		},
+		onPaginationChange: (updater) => {
+			const newPagination =
+				typeof updater === "function"
+					? updater({ pageIndex, pageSize })
+					: updater;
+			setPageIndex(newPagination.pageIndex);
+			setPageSize(newPagination.pageSize);
 		},
 	});
 
@@ -215,26 +231,22 @@ export function DataTable<
 				</Table>
 			</div>
 			<div className="flex items-center justify-end space-x-2 py-4">
-				{(table.getCanPreviousPage() || table.getCanNextPage()) && (
-					<>
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => table.previousPage()}
-							disabled={!table.getCanPreviousPage()}
-						>
-							Previous
-						</Button>
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => table.nextPage()}
-							disabled={!table.getCanNextPage()}
-						>
-							Next
-						</Button>
-					</>
-				)}
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={() => table.previousPage()}
+					disabled={!table.getCanPreviousPage()}
+				>
+					Previous
+				</Button>
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={() => table.nextPage()}
+					disabled={!table.getCanNextPage()}
+				>
+					Next
+				</Button>
 			</div>
 		</div>
 	);
