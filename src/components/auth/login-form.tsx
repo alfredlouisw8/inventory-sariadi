@@ -32,15 +32,18 @@ export default function LoginForm() {
 	const form = useForm<z.infer<typeof signInSchema>>({
 		resolver: zodResolver(signInSchema),
 		defaultValues: {
-			email: "",
+			username: "",
 			password: "",
 		},
 	});
 
-	async function onSubmit({ email, password }: z.infer<typeof signInSchema>) {
+	async function onSubmit({
+		username,
+		password,
+	}: z.infer<typeof signInSchema>) {
 		try {
 			const signInResult = await signIn("credentials", {
-				email,
+				username,
 				password,
 				callbackUrl: "/customers",
 				redirect: false, // Change this to false to handle redirection manually
@@ -78,12 +81,12 @@ export default function LoginForm() {
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 							<FormField
 								control={form.control}
-								name="email"
+								name="username"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Email</FormLabel>
+										<FormLabel>Username</FormLabel>
 										<FormControl>
-											<Input placeholder="name@example.com" {...field} />
+											<Input placeholder="username" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
