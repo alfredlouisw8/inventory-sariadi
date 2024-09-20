@@ -25,6 +25,13 @@ import { Input } from '@/components/ui/input'
 import { Checkbox } from '../ui/checkbox'
 import { DateRange } from 'react-day-picker'
 import { DatePickerWithRange } from './date-range-picker'
+import {
+  Select,
+  SelectItem,
+  SelectTrigger,
+  SelectContent,
+} from '@/components/ui/select' // Add select component from your UI library
+import { serviceTypeText } from '@/utils/functions'
 
 interface DataTableProps<TData extends { id: string }, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -37,6 +44,11 @@ interface DataTableProps<TData extends { id: string }, TValue> {
     label: string
     name: string
   } | null // New prop for date range filtering
+  selectFilter?: {
+    label: string
+    name: string
+    options: { label: string; value: string }[] // List of options for the select filter
+  } | null // Add select filter prop
   showRowSelection?: boolean
   rowSelection?: string[]
   setRowSelection?: (
@@ -52,6 +64,7 @@ export function DataTable<
   data,
   filterColumn,
   dateFilter = null,
+  selectFilter = null, // New prop for select filter
   showRowSelection = false,
   rowSelection = [],
   setRowSelection = () => {},
@@ -59,6 +72,7 @@ export function DataTable<
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [dateRange, setDateRange] = useState<DateRange | undefined>()
+  const [selectValue, setSelectValue] = useState<string | undefined>() // Add select filter state
   const [pageIndex, setPageIndex] = useState(0) // Add pagination state
   const [pageSize, setPageSize] = useState(10) // Number of rows per page
 
@@ -69,17 +83,26 @@ export function DataTable<
 
   // Memoize filtered data to avoid recalculating on every render
   const filteredData = useMemo(() => {
-    if (!dateRange || !dateFilter) return data // If no date filter, return all data
+    let result = data
 
-    const { from, to } = dateRange
-    if (!from || !to) return data // If range is incomplete, return all data
+    // Apply date filter if selected
+    if (dateRange && dateFilter) {
+      const { from, to } = dateRange
+      if (from && to) {
+        result = result.filter((row) => {
+          const rowDate = new Date(getNestedValue(row, dateFilter.name)) // Use the helper to access nested dates
+          return rowDate >= from && rowDate <= to // Check if date falls within the selected range
+        })
+      }
+    }
 
-    // Filter data based on the selected date range
-    return data.filter((row) => {
-      const rowDate = new Date(getNestedValue(row, dateFilter.name)) // Use the helper to access nested dates
-      return rowDate >= from && rowDate <= to // Check if date falls within the selected range
-    })
-  }, [data, dateRange, dateFilter])
+    // Apply select filter if selected
+    if (selectValue && selectFilter) {
+      result = result.filter((row) => row[selectFilter.name] === selectValue)
+    }
+
+    return result
+  }, [data, dateRange, dateFilter, selectValue, selectFilter])
 
   const table = useReactTable({
     data: filteredData, // Use filtered data
@@ -124,24 +147,48 @@ export function DataTable<
 
   return (
     <div className="w-full">
-      {(filterColumn || dateFilter) && (
+      {(filterColumn || dateFilter || selectFilter) && (
         <div className="flex items-center justify-between gap-4 py-4">
-          {filterColumn && (
-            <Input
-              placeholder={`Cari ${filterColumn.label}`}
-              value={
-                (table
-                  .getColumn(filterColumn.name)
-                  ?.getFilterValue() as string) ?? ''
-              }
-              onChange={(event) =>
-                table
-                  .getColumn(filterColumn.name)
-                  ?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm"
-            />
-          )}
+          <div className="flex items-center gap-2 w-full">
+            {filterColumn && (
+              <Input
+                placeholder={`Cari ${filterColumn.label}`}
+                value={
+                  (table
+                    .getColumn(filterColumn.name)
+                    ?.getFilterValue() as string) ?? ''
+                }
+                onChange={(event) =>
+                  table
+                    .getColumn(filterColumn.name)
+                    ?.setFilterValue(event.target.value)
+                }
+                className="max-w-sm"
+              />
+            )}
+            {selectFilter && (
+              <Select
+                value={selectValue}
+                onValueChange={(value) => setSelectValue(value)}
+              >
+                <SelectTrigger className="max-w-sm">
+                  <span>
+                    {selectValue
+                      ? serviceTypeText(selectValue)
+                      : `Pilih ${selectFilter.label}`}
+                  </span>
+                </SelectTrigger>
+                <SelectContent>
+                  {selectFilter.options.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+
           {dateFilter && (
             <div className="flex items-center gap-2">
               <DatePickerWithRange
@@ -231,27 +278,26 @@ export function DataTable<
         </Table>
       </div>
 
-      {table.getCanPreviousPage() ||
-        (table.getCanNextPage() && (
-          <div className="flex items-center justify-end space-x-2 py-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
-          </div>
-        ))}
+      {table.getCanPreviousPage() || table.getCanNextPage() ? (
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      ) : null}
     </div>
   )
 }

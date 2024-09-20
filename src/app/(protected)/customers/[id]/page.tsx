@@ -7,7 +7,7 @@ import AddGoodDialog from '@/components/goods/add-good-dialog'
 import AddServiceDialog from '@/components/services/add-service-dialog'
 import BackButton from '@/components/back-button'
 import getInvoices from '@/actions/invoices/getInvoices'
-import { invoicesColumns } from '@/components/invoices/columns'
+import { invoicesWithServicesColumns } from '@/components/invoices/columns'
 import AddInvoiceDialog from '@/components/invoices/add-invoice-dialog'
 import { serviceColumns } from '@/components/services/columns'
 import { Button } from '@/components/ui/button'
@@ -19,6 +19,9 @@ import ExportCSV from '@/components/export-csv'
 import { exportServicesData } from '@/actions/services/exportServices'
 import { exportInvoicesData } from '@/actions/invoices/exportInvoices'
 import { exportGoodsData } from '@/actions/goods/exportGoods'
+import { ServiceType } from '@prisma/client'
+import { serviceTypeText } from '@/utils/functions'
+import ExportInvoiceXlsx from '@/components/invoices/export-invoice'
 
 export default async function CustomerDetailPage({
   params,
@@ -80,10 +83,10 @@ export default async function CustomerDetailPage({
               <p className="text-xl font-bold">Jasa</p>
 
               <div className="flex items-center gap-2">
-                <ExportCSV
+                {/* <ExportCSV
                   url={`/api/services/export?customerId=${customerId}`}
                   fileName="jasa.csv"
-                />
+                /> */}
                 <AddServiceDialog customerId={customerId} />
               </div>
             </div>
@@ -99,6 +102,14 @@ export default async function CustomerDetailPage({
                   label: 'tanggal jasa',
                   name: 'date',
                 }}
+                selectFilter={{
+                  label: 'tipe jasa',
+                  name: 'serviceType',
+                  options: Object.keys(ServiceType).map((type) => ({
+                    label: serviceTypeText(type),
+                    value: type,
+                  })),
+                }}
               />
             </div>
           </div>
@@ -107,10 +118,10 @@ export default async function CustomerDetailPage({
             <div className="flex items-center justify-between">
               <p className="text-xl font-bold">Barang</p>
               <div className="flex items-center gap-2">
-                <ExportCSV
+                {/* <ExportCSV
                   url={`/api/goods/export?customerId=${customerId}`}
                   fileName="barang.csv"
-                />
+                /> */}
                 <AddGoodDialog customerId={customerId} />
               </div>
             </div>
@@ -128,16 +139,17 @@ export default async function CustomerDetailPage({
               <p className="text-xl font-bold">Invoice</p>
 
               <div className="flex items-center gap-2">
-                <ExportCSV
+                {/* <ExportCSV
                   url={`/api/invoices/export?customerId=${customerId}`}
                   fileName="invoice.csv"
-                />
+                /> */}
+                <ExportInvoiceXlsx customerId={customerId} />
                 <AddInvoiceDialog customerId={customerId} />
               </div>
             </div>
             <div>
               <DataTable
-                columns={invoicesColumns}
+                columns={invoicesWithServicesColumns}
                 data={invoicesData}
                 filterColumn={{ label: 'nomor invoice', name: 'invoiceCode' }}
                 dateFilter={{

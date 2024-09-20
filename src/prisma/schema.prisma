@@ -121,6 +121,7 @@ model Service {
   remarks                String?
   buyPrice               Int?                   @default(0)
   sellPrice              Int?                   @default(0)
+  profit                 Int?                   @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -137,6 +138,7 @@ model Invoice {
   invoiceCode String    @unique
   paymentDate DateTime?
   remarks     String?
+  totalPrice  Int?      @default(0)
   tax         Boolean
 
   createdAt DateTime @default(now())
@@ -215,6 +217,8 @@ enum ServiceType {
   Repacking
   RepackingWeighing
   Stripping
+  Overtime
+  Storage
 }
 
 enum ServiceCalculationType {
