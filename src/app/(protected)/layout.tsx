@@ -138,6 +138,11 @@ export default async function DashboardLayout({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem>
+                <Link href={`/users/${session.user.id}/change-password`}>
+                  Ganti Password
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
                 <LogoutButton />
               </DropdownMenuItem>
             </DropdownMenuContent>

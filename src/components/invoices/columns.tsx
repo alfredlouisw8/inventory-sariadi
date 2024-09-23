@@ -25,6 +25,24 @@ import { formatter } from '@/utils/const'
 
 export const invoiceColumns: ColumnDef<Invoice>[] = [
   {
+    accessorKey: 'createdAt',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Tanggal invoice
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) =>
+      row.original.createdAt
+        ? format(new Date(row.original.createdAt), 'dd-MM-yyyy')
+        : '-',
+  },
+  {
     accessorKey: 'invoiceCode',
     header: ({ column }) => {
       return (
@@ -46,7 +64,7 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Tanggal pembayaran
+          Tanggal pelunasan
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -96,6 +114,24 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
 ]
 
 export const invoicesWithServicesColumns: ColumnDef<InvoiceWithServices>[] = [
+  {
+    accessorKey: 'createdAt',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Tanggal invoice
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) =>
+      row.original.createdAt
+        ? format(new Date(row.original.createdAt), 'dd-MM-yyyy')
+        : '-',
+  },
   {
     accessorKey: 'invoiceCode',
     header: ({ column }) => {
