@@ -74,59 +74,64 @@ export default async function InvoiceDetailPage({
       </div>
       <div className="flex rounded-lg shadow-sm ">
         <div className="flex flex-col gap-5 w-full">
-          <div>
-            <p>
-              <b>Invoice ID</b>: {invoiceDetail.invoiceCode}
-            </p>
-            <p>
-              <b>Tanggal Pembayaran</b>:{' '}
-              {invoiceDetail.paymentDate
-                ? format(invoiceDetail.paymentDate, 'dd-MM-yyyy')
-                : '-'}
-            </p>
-            <p>
-              <b>PPN</b>: {invoiceDetail.tax ? 'Ya' : 'Tidak'}
-            </p>
-            <p>
-              <b>Harga Beli Total</b>: {formatter.format(buyPriceTotal)}
-            </p>
-            <p>
-              <b>Harga Jual Total</b>: {formatter.format(sellPriceTotal)}
-            </p>
-            <p>
-              <b>Profit</b>: {formatter.format(totalProfit)}
-            </p>
-            <p>
-              <b>Keterangan</b>: {invoiceDetail.remarks}
-            </p>
-          </div>
+          <p>
+            <b>Tanggal invoice</b>:{' '}
+            {format(invoiceDetail.createdAt, 'dd-MM-yyyy')}
+          </p>
+          <p>
+            <b>Invoice ID</b>: {invoiceDetail.invoiceCode}
+          </p>
+          <p>
+            <b>Invoice ID</b>: {invoiceDetail.invoiceCode}
+          </p>
+          <p>
+            <b>Tanggal Pelunasan</b>:{' '}
+            {invoiceDetail.paymentDate
+              ? format(invoiceDetail.paymentDate, 'dd-MM-yyyy')
+              : '-'}
+          </p>
+          <p>
+            <b>PPN</b>: {invoiceDetail.tax ? 'Ya' : 'Tidak'}
+          </p>
+          <p>
+            <b>Harga Beli Total</b>: {formatter.format(buyPriceTotal)}
+          </p>
+          <p>
+            <b>Harga Jual Total</b>: {formatter.format(sellPriceTotal)}
+          </p>
+          <p>
+            <b>Profit</b>: {formatter.format(totalProfit)}
+          </p>
+          <p>
+            <b>Keterangan</b>: {invoiceDetail.remarks}
+          </p>
+        </div>
 
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <p className="text-xl font-bold">Jasa</p>
-            </div>
-            <div>
-              <DataTable
-                columns={invoiceServicesColumns}
-                data={invoiceDetail.services}
-                filterColumn={{
-                  label: 'kode jasa',
-                  name: 'serviceCode',
-                }}
-                dateFilter={{
-                  label: 'tanggal jasa',
-                  name: 'date',
-                }}
-                selectFilter={{
-                  label: 'tipe jasa',
-                  name: 'serviceType',
-                  options: Object.keys(ServiceType).map((type) => ({
-                    label: serviceTypeText(type),
-                    value: type,
-                  })),
-                }}
-              />
-            </div>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <p className="text-xl font-bold">Jasa</p>
+          </div>
+          <div>
+            <DataTable
+              columns={invoiceServicesColumns}
+              data={invoiceDetail.services}
+              filterColumn={{
+                label: 'kode jasa',
+                name: 'serviceCode',
+              }}
+              dateFilter={{
+                label: 'tanggal jasa',
+                name: 'date',
+              }}
+              selectFilter={{
+                label: 'tipe jasa',
+                name: 'serviceType',
+                options: Object.keys(ServiceType).map((type) => ({
+                  label: serviceTypeText(type),
+                  value: type,
+                })),
+              }}
+            />
           </div>
         </div>
       </div>

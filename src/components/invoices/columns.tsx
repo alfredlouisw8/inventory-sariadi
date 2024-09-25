@@ -323,7 +323,10 @@ export const invoiceServicesColumns: ColumnDef<Service>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => formatter.format(row.original.profit || 0),
+    cell: ({ row }) =>
+      row.original.sellPrice === 0
+        ? 0
+        : formatter.format(row.original.profit || 0),
   },
   {
     accessorKey: 'remarks',
