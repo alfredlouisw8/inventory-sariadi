@@ -31,6 +31,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     tax,
     serviceIds,
     remarks,
+    invoiceDate,
     customerId,
     totalPrice,
   } = data
@@ -71,6 +72,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
           paymentDate,
           tax,
           remarks,
+          invoiceDate,
           customerId,
           totalPrice,
         },

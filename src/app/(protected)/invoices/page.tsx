@@ -21,7 +21,7 @@ export default async function CustomersPage() {
           columns={invoiceColumns}
           data={data}
           filterColumn={filterColumn}
-          dateFilter={{ label: 'tanggal', name: 'createdAt' }}
+          dateFilter={{ label: 'tanggal invoice', name: 'invoiceDate' }}
         />
       </div>
     </>

@@ -15,6 +15,7 @@ export type ExportInvoiceData = {
     invoiceCode: string
     tax: string
     paymentDate: string
+    invoiceDate: string
     buyPriceTotal: number
     sellPriceBeforeTax: number
     sellPriceTotal: number
@@ -26,6 +27,7 @@ export type ExportInvoiceData = {
       buyPrice: number
       sellPrice: number
       date: string
+      remarks: string
     }[]
   }[]
 }[]

@@ -66,6 +66,8 @@ export default function InvoiceForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       invoiceCode: invoiceData?.invoiceCode || '',
+      invoiceDate: invoiceData?.invoiceDate || new Date(),
+      paymentDate: invoiceData?.paymentDate || undefined,
       customerId,
       remarks: invoiceData?.remarks || '',
       tax: invoiceData?.tax || false,
@@ -207,7 +209,23 @@ export default function InvoiceForm({
                   </FormItem>
                 )}
               />
-
+              <FormField
+                control={form.control}
+                name="tax"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormLabel>PPN</FormLabel>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex items-center gap-5">
               <FormField
                 control={form.control}
                 name="totalPrice"
@@ -221,19 +239,41 @@ export default function InvoiceForm({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
-                name="tax"
+                name="invoiceDate"
                 render={({ field }) => (
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormLabel>PPN</FormLabel>
+                  <FormItem className="flex-1">
+                    <FormLabel>Tanggal invoice</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={'outline'}
+                            className={cn(
+                              'w-full pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, 'dd-MM-yyyy')
+                            ) : (
+                              <span>Pilih tanggal</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

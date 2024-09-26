@@ -52,9 +52,11 @@ export default function ExportInvoiceXlsx({ customerId }: Props) {
         'Nama Customer',
         'Kode Jasa',
         'Tipe Jasa',
+        'Keterangan Jasa',
         'Harga Beli',
         'Harga Beli Total',
         'Tanggal Pengerjaan',
+        'Tanggal Invoice',
         'Harga Jual',
         'Harga Jual Sebelum Pajak',
         'PPN',
@@ -101,9 +103,11 @@ export default function ExportInvoiceXlsx({ customerId }: Props) {
               null, // Skip nama_customer (since it's merged)
               service.serviceCode, // B3, B4 for services
               service.serviceType,
+              service.remarks,
               service.buyPrice,
               invoice.buyPriceTotal, // E3:E4 merged for buyPriceTotal
               service.date,
+              invoice.invoiceDate,
               service.sellPrice,
               invoice.sellPriceBeforeTax, // Sell price before tax (merged)
               invoice.tax, // PPN (merged)
@@ -130,7 +134,7 @@ export default function ExportInvoiceXlsx({ customerId }: Props) {
 
           // Merge the necessary cells for customer and invoice **after** all services are added
           worksheet.mergeCells(currentRow, 1, currentRow + numServices, 1) // Merge nama_customer (A2:A4)
-          worksheet.mergeCells(currentRow, 2, currentRow, 13) // Merge kode_invoice (B2:M2)
+          worksheet.mergeCells(currentRow, 2, currentRow, 15) // Merge kode_invoice (B2:M2)
 
           // Apply styles to merged cells for `nama_customer` and `kode_invoice`
           const customerCell = worksheet.getCell(`A${currentRow}`)
@@ -148,13 +152,14 @@ export default function ExportInvoiceXlsx({ customerId }: Props) {
           })
 
           // Merge invoice-level details across service rows
-          worksheet.mergeCells(currentRow + 1, 5, currentRow + numServices, 5) // Merge harga_beli_total
-          worksheet.mergeCells(currentRow + 1, 8, currentRow + numServices, 8) // Merge sellPriceBeforeTax
-          worksheet.mergeCells(currentRow + 1, 9, currentRow + numServices, 9) // Merge tax
-          worksheet.mergeCells(currentRow + 1, 10, currentRow + numServices, 10) // Merge sellPriceTotal
-          worksheet.mergeCells(currentRow + 1, 11, currentRow + numServices, 11) // Merge profit
-          worksheet.mergeCells(currentRow + 1, 12, currentRow + numServices, 12) // Merge paymentDate
-          worksheet.mergeCells(currentRow + 1, 13, currentRow + numServices, 13) // Merge remarks (keterangan)
+          worksheet.mergeCells(currentRow + 1, 6, currentRow + numServices, 6) // Merge harga_beli_total
+          worksheet.mergeCells(currentRow + 1, 8, currentRow + numServices, 8) // Merge invoiceDate
+          worksheet.mergeCells(currentRow + 1, 10, currentRow + numServices, 10) // Merge sellPriceBeforeTax
+          worksheet.mergeCells(currentRow + 1, 11, currentRow + numServices, 11) // Merge tax
+          worksheet.mergeCells(currentRow + 1, 12, currentRow + numServices, 12) // Merge sellPriceTotal
+          worksheet.mergeCells(currentRow + 1, 13, currentRow + numServices, 13) // Merge profit
+          worksheet.mergeCells(currentRow + 1, 14, currentRow + numServices, 14) // Merge paymentDate
+          worksheet.mergeCells(currentRow + 1, 15, currentRow + numServices, 15) // Merge remarks (keterangan)
 
           // Add space after each invoice
           worksheet.addRow([])
@@ -162,7 +167,7 @@ export default function ExportInvoiceXlsx({ customerId }: Props) {
             currentRow + numServices + 1,
             1,
             currentRow + numServices + 1,
-            13
+            15
           )
 
           // Update currentRow to reflect the next set of rows

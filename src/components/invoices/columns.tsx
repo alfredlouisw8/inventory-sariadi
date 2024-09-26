@@ -25,7 +25,22 @@ import { formatter } from '@/utils/const'
 
 export const invoiceColumns: ColumnDef<Invoice>[] = [
   {
-    accessorKey: 'createdAt',
+    accessorKey: 'customer.name',
+    id: 'customerName',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Nama customer
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
+    accessorKey: 'invoiceDate',
     header: ({ column }) => {
       return (
         <Button
@@ -38,8 +53,8 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
       )
     },
     cell: ({ row }) =>
-      row.original.createdAt
-        ? format(new Date(row.original.createdAt), 'dd-MM-yyyy')
+      row.original.invoiceDate
+        ? format(new Date(row.original.invoiceDate), 'dd-MM-yyyy')
         : '-',
   },
   {
@@ -115,7 +130,7 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
 
 export const invoicesWithServicesColumns: ColumnDef<InvoiceWithServices>[] = [
   {
-    accessorKey: 'createdAt',
+    accessorKey: 'invoiceDate',
     header: ({ column }) => {
       return (
         <Button
@@ -128,8 +143,8 @@ export const invoicesWithServicesColumns: ColumnDef<InvoiceWithServices>[] = [
       )
     },
     cell: ({ row }) =>
-      row.original.createdAt
-        ? format(new Date(row.original.createdAt), 'dd-MM-yyyy')
+      row.original.invoiceDate
+        ? format(new Date(row.original.invoiceDate), 'dd-MM-yyyy')
         : '-',
   },
   {
@@ -235,6 +250,20 @@ export const invoiceServicesColumns: ColumnDef<Service>[] = [
     },
   },
   {
+    accessorKey: 'remarks',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Keterangan
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
     accessorKey: 'serviceType',
     header: ({ column }) => {
       return (
@@ -327,19 +356,5 @@ export const invoiceServicesColumns: ColumnDef<Service>[] = [
       row.original.sellPrice === 0
         ? 0
         : formatter.format(row.original.profit || 0),
-  },
-  {
-    accessorKey: 'remarks',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Keterangan
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
   },
 ]

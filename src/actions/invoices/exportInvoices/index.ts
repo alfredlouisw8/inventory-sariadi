@@ -23,7 +23,7 @@ export async function exportInvoicesData(
         include: {
           invoices: {
             where: {
-              createdAt: {
+              invoiceDate: {
                 gte: new Date(fromDate), // `fromDate` is the start date (e.g., new Date('2023-01-01'))
                 lte: new Date(toDate), // `toDate` is the end date (e.g., new Date('2023-12-31'))
               },
@@ -45,7 +45,7 @@ export async function exportInvoicesData(
         where: {
           invoices: {
             some: {
-              createdAt: {
+              invoiceDate: {
                 gte: new Date(fromDate),
                 lte: new Date(toDate),
               },
@@ -55,7 +55,7 @@ export async function exportInvoicesData(
         include: {
           invoices: {
             where: {
-              createdAt: {
+              invoiceDate: {
                 gte: new Date(fromDate), // `fromDate` is the start date (e.g., new Date('2023-01-01'))
                 lte: new Date(toDate), // `toDate` is the end date (e.g., new Date('2023-12-31'))
               },
@@ -100,6 +100,7 @@ export async function exportInvoicesData(
           paymentDate: invoice.paymentDate
             ? format(invoice.paymentDate, 'dd-MM-yyyy')
             : '-',
+          invoiceDate: format(invoice.invoiceDate, 'dd-MM-yyyy'),
           buyPriceTotal,
           sellPriceBeforeTax,
           sellPriceTotal,
@@ -111,6 +112,7 @@ export async function exportInvoicesData(
             buyPrice: service.buyPrice || 0,
             sellPrice: service.sellPrice || 0,
             date: format(service.date, 'dd-MM-yyyy'),
+            remarks: service.remarks || '',
           })),
         }
       }),

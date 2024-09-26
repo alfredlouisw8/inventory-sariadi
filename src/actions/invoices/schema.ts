@@ -5,6 +5,7 @@ export const InvoiceSchema = z.object({
     message: 'Harus diisi',
   }),
   customerId: z.string(),
+  invoiceDate: z.date(),
   paymentDate: z.date().optional(),
   remarks: z.string(),
   tax: z.boolean(),

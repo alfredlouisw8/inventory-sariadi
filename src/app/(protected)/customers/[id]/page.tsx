@@ -95,8 +95,8 @@ export default async function CustomerDetailPage({
                 columns={serviceColumns}
                 data={servicesData}
                 filterColumn={{
-                  label: 'kode jasa',
-                  name: 'serviceCode',
+                  label: 'keterangan jasa',
+                  name: 'remarks',
                 }}
                 dateFilter={{
                   label: 'tanggal jasa',

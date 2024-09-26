@@ -136,6 +136,7 @@ model Service {
 model Invoice {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   invoiceCode String    @unique
+  invoiceDate DateTime  @default(now())
   paymentDate DateTime?
   remarks     String?
   totalPrice  Int?      @default(0)

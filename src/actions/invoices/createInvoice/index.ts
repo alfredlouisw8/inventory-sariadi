@@ -28,6 +28,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     remarks,
     customerId,
     totalPrice,
+    invoiceDate,
   } = data
 
   try {
@@ -38,6 +39,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         data: {
           invoiceCode,
           paymentDate,
+          invoiceDate,
           tax,
           remarks,
           customerId,

@@ -25,19 +25,20 @@ import { serviceCalculationTypeText, serviceTypeText } from '@/utils/functions'
 import EditServiceDialog from './edit-service-dialog'
 import { ServiceWithGoods } from '@/utils/types'
 import DeleteServiceDialog from './delete-service-dialog'
+import { formatter } from '@/utils/const'
 
 // components/services/columns.tsx
 
 export const serviceColumns: ColumnDef<ServiceWithGoods>[] = [
   {
-    accessorKey: 'serviceCode',
+    accessorKey: 'remarks',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Kode Jasa
+          Keterangan
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -90,18 +91,19 @@ export const serviceColumns: ColumnDef<ServiceWithGoods>[] = [
     cell: ({ row }) => format(row.original.date, 'dd-MM-yyyy'),
   },
   {
-    accessorKey: 'remarks',
+    accessorKey: 'buyPrice',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Keterangan
+          Harga Beli
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
+    cell: ({ row }) => formatter.format(row.original.buyPrice || 0),
   },
   {
     id: 'actions',

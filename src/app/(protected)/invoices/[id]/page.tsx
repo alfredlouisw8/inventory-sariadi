@@ -72,14 +72,11 @@ export default async function InvoiceDetailPage({
           />
         </div>
       </div>
-      <div className="flex rounded-lg shadow-sm ">
+      <div className="flex flex-col rounded-lg shadow-sm gap-5">
         <div className="flex flex-col gap-5 w-full">
           <p>
             <b>Tanggal invoice</b>:{' '}
-            {format(invoiceDetail.createdAt, 'dd-MM-yyyy')}
-          </p>
-          <p>
-            <b>Invoice ID</b>: {invoiceDetail.invoiceCode}
+            {format(invoiceDetail.invoiceDate, 'dd-MM-yyyy')}
           </p>
           <p>
             <b>Invoice ID</b>: {invoiceDetail.invoiceCode}
@@ -106,7 +103,6 @@ export default async function InvoiceDetailPage({
             <b>Keterangan</b>: {invoiceDetail.remarks}
           </p>
         </div>
-
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <p className="text-xl font-bold">Jasa</p>
@@ -116,8 +112,8 @@ export default async function InvoiceDetailPage({
               columns={invoiceServicesColumns}
               data={invoiceDetail.services}
               filterColumn={{
-                label: 'kode jasa',
-                name: 'serviceCode',
+                label: 'keterangan jasa',
+                name: 'remarks',
               }}
               dateFilter={{
                 label: 'tanggal jasa',
