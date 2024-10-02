@@ -220,6 +220,7 @@ enum ServiceType {
   Stripping
   Overtime
   Storage
+  Rework
 }
 
 enum ServiceCalculationType {
