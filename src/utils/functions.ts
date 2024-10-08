@@ -40,8 +40,13 @@ export function serviceCalculationTypeText(type: string) {
   }
 }
 
-export function calculateProfit(buyPrice: number, sellPrice: number) {
-  return sellPrice - sellPrice * INCOME_TAX - buyPrice
+export function calculateProfit(
+  buyPrice: number,
+  sellPrice: number,
+  tax: boolean
+) {
+  const sellTax = tax ? sellPrice * PRICE_TAX : 0
+  return sellPrice - sellTax - buyPrice
 }
 
 export function getSellPriceBeforeTax(
