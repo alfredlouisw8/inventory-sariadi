@@ -10,6 +10,8 @@ import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { serviceCalculationTypeText, serviceTypeText } from '@/utils/functions'
 import { format } from 'date-fns'
+import { TIMEZONE } from '@/utils/const'
+import { formatInTimeZone } from 'date-fns-tz'
 
 // Adjusted column definitions to work with individual ServiceGood objects
 
@@ -128,7 +130,8 @@ export const goodsWithServiceColumns: ColumnDef<GoodWithServiceData>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => format(row.original.service.date, 'dd-MM-yyyy'),
+    cell: ({ row }) =>
+      formatInTimeZone(row.original.service.date, TIMEZONE, 'dd-MM-yyyy'),
   },
   {
     accessorKey: 'goodCount', // Direct access to 'goodCount'

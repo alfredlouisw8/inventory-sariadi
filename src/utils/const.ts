@@ -10,3 +10,4 @@ export const formatter = new Intl.NumberFormat('en-US', {
 
 export const PRICE_TAX = 0.11
 export const INCOME_TAX = 0.02
+export const TIMEZONE = 'Asia/Bangkok'

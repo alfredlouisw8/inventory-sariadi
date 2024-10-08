@@ -18,7 +18,8 @@ import { format } from 'date-fns'
 import EditInvoiceDialog from './edit-invoice-dialog'
 import { InvoiceWithServices } from '@/utils/types'
 import DeleteInvoiceDialog from './delete-invoice-dialog'
-import { formatter } from '@/utils/const'
+import { formatter, TIMEZONE } from '@/utils/const'
+import { formatInTimeZone } from 'date-fns-tz'
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -54,7 +55,11 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
     },
     cell: ({ row }) =>
       row.original.invoiceDate
-        ? format(new Date(row.original.invoiceDate), 'dd-MM-yyyy')
+        ? formatInTimeZone(
+            new Date(row.original.invoiceDate),
+            TIMEZONE,
+            'dd-MM-yyyy'
+          )
         : '-',
   },
   {
@@ -86,7 +91,11 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
     },
     cell: ({ row }) =>
       row.original.paymentDate
-        ? format(new Date(row.original.paymentDate), 'dd-MM-yyyy')
+        ? formatInTimeZone(
+            new Date(row.original.paymentDate),
+            TIMEZONE,
+            'dd-MM-yyyy'
+          )
         : '-',
   },
   {
@@ -144,7 +153,11 @@ export const invoicesWithServicesColumns: ColumnDef<InvoiceWithServices>[] = [
     },
     cell: ({ row }) =>
       row.original.invoiceDate
-        ? format(new Date(row.original.invoiceDate), 'dd-MM-yyyy')
+        ? formatInTimeZone(
+            new Date(row.original.invoiceDate),
+            TIMEZONE,
+            'dd-MM-yyyy'
+          )
         : '-',
   },
   {
@@ -176,7 +189,11 @@ export const invoicesWithServicesColumns: ColumnDef<InvoiceWithServices>[] = [
     },
     cell: ({ row }) =>
       row.original.paymentDate
-        ? format(new Date(row.original.paymentDate), 'dd-MM-yyyy')
+        ? formatInTimeZone(
+            new Date(row.original.paymentDate),
+            TIMEZONE,
+            'dd-MM-yyyy'
+          )
         : '-',
   },
   {
@@ -307,7 +324,8 @@ export const invoiceServicesColumns: ColumnDef<Service>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => format(row.original.date, 'dd-MM-yyyy'),
+    cell: ({ row }) =>
+      formatInTimeZone(row.original.date, TIMEZONE, 'dd-MM-yyyy'),
   },
   {
     accessorKey: 'buyPrice',

@@ -4,6 +4,8 @@ import { serviceTypeText } from '@/utils/functions'
 import { format } from 'date-fns'
 
 import prisma from '@/lib/prisma'
+import { formatInTimeZone } from 'date-fns-tz'
+import { TIMEZONE } from '@/utils/const'
 
 export async function exportServicesData(customerId: string) {
   let data: any[] = []
@@ -27,7 +29,11 @@ export async function exportServicesData(customerId: string) {
     data = result.map((item) => ({
       nama_customer: customer?.name,
       kode_jasa: item.service.serviceCode,
-      tanggal_pengerjaan: format(item.service.date, 'dd-MM-yyyy'),
+      tanggal_pengerjaan: formatInTimeZone(
+        item.service.date,
+        TIMEZONE,
+        'dd-MM-yyyy'
+      ),
       tipe_jasa: serviceTypeText(item.service.serviceType),
       no_container: item.containerNumber,
       no_truck: item.truckNumber,

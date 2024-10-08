@@ -11,6 +11,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { formatInTimeZone } from 'date-fns-tz'
+import { TIMEZONE } from '@/utils/const'
 
 interface DatePickerWithRangeProps {
   className?: string // Optional className prop
@@ -50,11 +52,11 @@ export function DatePickerWithRange({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, 'dd/MM/yyyy')} -{' '}
-                  {format(date.to, 'dd/MM/yyyy')}
+                  {formatInTimeZone(date.from, TIMEZONE, 'dd/MM/yyyy')} -{' '}
+                  {formatInTimeZone(date.to, TIMEZONE, 'dd/MM/yyyy')}
                 </>
               ) : (
-                format(date.from, 'dd/MM/yyyy')
+                formatInTimeZone(date.from, TIMEZONE, 'dd/MM/yyyy')
               )
             ) : (
               <span>Pilih {label || 'tanggal'}</span>

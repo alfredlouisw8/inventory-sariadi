@@ -52,6 +52,8 @@ import { ServiceWithGoods } from '@/utils/types'
 import { updateService } from '@/actions/services/updateService'
 import { deleteService } from '@/actions/services/deleteService'
 import { useRouter } from 'next/navigation'
+import { formatInTimeZone } from 'date-fns-tz'
+import { TIMEZONE } from '@/utils/const'
 
 type Props = {
   type: 'create' | 'update' | 'delete'
@@ -256,7 +258,11 @@ export default function ServiceForm({
                             )}
                           >
                             {field.value ? (
-                              format(field.value, 'dd-MM-yyyy')
+                              formatInTimeZone(
+                                field.value,
+                                TIMEZONE,
+                                'dd-MM-yyyy'
+                              )
                             ) : (
                               <span>Pilih tanggal</span>
                             )}

@@ -16,6 +16,8 @@ import { useState } from 'react'
 import { DatePickerWithRange } from '../ui/date-range-picker'
 import { DateRange } from 'react-day-picker'
 import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
+import { TIMEZONE } from '@/utils/const'
 
 type Props = {
   customerId: string
@@ -28,12 +30,16 @@ export default function ExportInvoiceXlsx({ customerId }: Props) {
     try {
       // Fetch invoice data from the API
       const response = await fetch(
-        `/api/invoices/export?customerId=${customerId}&fromDate=${format(
+        `/api/invoices/export?customerId=${customerId}&fromDate=${formatInTimeZone(
           dateRange?.from || new Date(),
-          'yyy-MM-dd'
-        )}&toDate=${format(dateRange?.to || new Date(), 'yyyy-MM-dd')}`
+          TIMEZONE,
+          'yyyy-MM-dd'
+        )}&toDate=${formatInTimeZone(
+          dateRange?.to || new Date(),
+          TIMEZONE,
+          'yyyy-MM-dd'
+        )}`
       )
-      console.log('response', response)
 
       if (!response.ok) throw new Error('Failed to fetch invoice data')
 

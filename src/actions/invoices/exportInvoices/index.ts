@@ -7,6 +7,8 @@ import {
 import { format } from 'date-fns'
 import prisma from '@/lib/prisma'
 import { ExportInvoiceData } from '@/utils/types'
+import { formatInTimeZone } from 'date-fns-tz'
+import { TIMEZONE } from '@/utils/const'
 
 export async function exportInvoicesData(
   customerId: string | null,
@@ -92,15 +94,23 @@ export async function exportInvoicesData(
           invoice.tax || false
         )
 
-        const totalProfit = calculateProfit(buyPriceTotal, sellPriceBeforeTax)
+        const totalProfit = calculateProfit(
+          buyPriceTotal,
+          sellPriceBeforeTax,
+          invoice.tax || false
+        )
 
         return {
           invoiceCode: invoice.invoiceCode,
           tax: invoice.tax ? 'Ya' : 'Tidak',
           paymentDate: invoice.paymentDate
-            ? format(invoice.paymentDate, 'dd-MM-yyyy')
+            ? formatInTimeZone(invoice.paymentDate, TIMEZONE, 'dd-MM-yyyy')
             : '-',
-          invoiceDate: format(invoice.invoiceDate, 'dd-MM-yyyy'),
+          invoiceDate: formatInTimeZone(
+            invoice.invoiceDate,
+            TIMEZONE,
+            'dd-MM-yyyy'
+          ),
           buyPriceTotal,
           sellPriceBeforeTax,
           sellPriceTotal,
@@ -111,7 +121,7 @@ export async function exportInvoicesData(
             serviceCode: service.serviceCode,
             buyPrice: service.buyPrice || 0,
             sellPrice: service.sellPrice || 0,
-            date: format(service.date, 'dd-MM-yyyy'),
+            date: formatInTimeZone(service.date, TIMEZONE, 'dd-MM-yyyy'),
             remarks: service.remarks || '',
           })),
         }

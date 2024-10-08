@@ -25,7 +25,8 @@ import { serviceCalculationTypeText, serviceTypeText } from '@/utils/functions'
 import EditServiceDialog from './edit-service-dialog'
 import { ServiceWithGoods } from '@/utils/types'
 import DeleteServiceDialog from './delete-service-dialog'
-import { formatter } from '@/utils/const'
+import { formatter, TIMEZONE } from '@/utils/const'
+import { formatInTimeZone } from 'date-fns-tz'
 
 // components/services/columns.tsx
 
@@ -88,7 +89,8 @@ export const serviceColumns: ColumnDef<ServiceWithGoods>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => format(row.original.date, 'dd-MM-yyyy'),
+    cell: ({ row }) =>
+      formatInTimeZone(row.original.date, TIMEZONE, 'dd-MM-yyyy'),
   },
   {
     accessorKey: 'buyPrice',

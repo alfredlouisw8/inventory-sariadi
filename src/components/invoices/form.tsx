@@ -36,6 +36,8 @@ import { invoiceServicesColumns } from './columns'
 import { useRouter } from 'next/navigation'
 import { serviceTypeText } from '@/utils/functions'
 import NumberInput from '../ui/number-input'
+import { formatInTimeZone } from 'date-fns-tz'
+import { TIMEZONE } from '@/utils/const'
 
 type Props = {
   type: 'create' | 'update' | 'delete'
@@ -188,7 +190,11 @@ export default function InvoiceForm({
                             )}
                           >
                             {field.value ? (
-                              format(field.value, 'dd-MM-yyyy')
+                              formatInTimeZone(
+                                field.value,
+                                TIMEZONE,
+                                'dd-MM-yyyy'
+                              )
                             ) : (
                               <span>Pilih tanggal</span>
                             )}
@@ -255,7 +261,11 @@ export default function InvoiceForm({
                             )}
                           >
                             {field.value ? (
-                              format(field.value, 'dd-MM-yyyy')
+                              formatInTimeZone(
+                                field.value,
+                                TIMEZONE,
+                                'dd-MM-yyyy'
+                              )
                             ) : (
                               <span>Pilih tanggal</span>
                             )}

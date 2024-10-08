@@ -7,8 +7,10 @@ import DeleteServiceDialog from '@/components/services/delete-service-dialog'
 import EditServiceDialog from '@/components/services/edit-service-dialog'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/data-table'
+import { TIMEZONE } from '@/utils/const'
 import { serviceCalculationTypeText, serviceTypeText } from '@/utils/functions'
 import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 import { PencilIcon, Trash2 } from 'lucide-react'
 
 export default async function ServiceDetailPage({
@@ -63,7 +65,7 @@ export default async function ServiceDetailPage({
             </p>
             <p>
               <b>Tanggal Pengerjaan</b>:{' '}
-              {format(serviceDetail.date, 'dd-MM-yyyy')}
+              {formatInTimeZone(serviceDetail.date, TIMEZONE, 'dd-MM-yyyy')}
             </p>
             <p>
               <b>Keterangan</b>: {serviceDetail.remarks}

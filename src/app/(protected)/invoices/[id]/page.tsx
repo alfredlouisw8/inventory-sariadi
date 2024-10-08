@@ -7,7 +7,7 @@ import EditInvoiceDialog from '@/components/invoices/edit-invoice-dialog'
 import { serviceColumns } from '@/components/services/columns'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/data-table'
-import { formatter, PRICE_TAX } from '@/utils/const'
+import { formatter, PRICE_TAX, TIMEZONE } from '@/utils/const'
 import {
   calculateProfit,
   getSellPriceBeforeTax,
@@ -17,6 +17,7 @@ import {
 import { ServiceType } from '@prisma/client'
 import { format } from 'date-fns'
 import { PencilIcon, Trash2 } from 'lucide-react'
+import { formatInTimeZone } from 'date-fns-tz'
 
 export default async function InvoiceDetailPage({
   params,
@@ -46,7 +47,11 @@ export default async function InvoiceDetailPage({
     invoiceDetail.tax
   )
 
-  const totalProfit = calculateProfit(buyPriceTotal, sellPriceBeforeTax)
+  const totalProfit = calculateProfit(
+    buyPriceTotal,
+    sellPriceBeforeTax,
+    invoiceDetail.tax
+  )
 
   return (
     <>
@@ -76,7 +81,11 @@ export default async function InvoiceDetailPage({
         <div className="flex flex-col gap-5 w-full">
           <p>
             <b>Tanggal invoice</b>:{' '}
-            {format(invoiceDetail.invoiceDate, 'dd-MM-yyyy')}
+            {formatInTimeZone(
+              invoiceDetail.invoiceDate,
+              TIMEZONE,
+              'dd-MM-yyyy'
+            )}
           </p>
           <p>
             <b>Invoice ID</b>: {invoiceDetail.invoiceCode}
@@ -84,7 +93,11 @@ export default async function InvoiceDetailPage({
           <p>
             <b>Tanggal Pelunasan</b>:{' '}
             {invoiceDetail.paymentDate
-              ? format(invoiceDetail.paymentDate, 'dd-MM-yyyy')
+              ? formatInTimeZone(
+                  invoiceDetail.paymentDate,
+                  TIMEZONE,
+                  'dd-MM-yyyy'
+                )
               : '-'}
           </p>
           <p>
