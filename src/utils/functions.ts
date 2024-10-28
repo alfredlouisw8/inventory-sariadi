@@ -20,6 +20,8 @@ export function serviceTypeText(type: string) {
       return 'Lembur'
     case ServiceType.Rework:
       return 'Rework'
+    case ServiceType.ForkliftRent:
+      return 'Sewa Forklift'
     default:
       // You may want to add a default return value or throw an error here
       return ''

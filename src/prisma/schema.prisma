@@ -221,6 +221,7 @@ enum ServiceType {
   Overtime
   Storage
   Rework
+  ForkliftRent
 }
 
 enum ServiceCalculationType {
