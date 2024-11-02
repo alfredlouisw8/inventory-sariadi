@@ -29,6 +29,7 @@ import {
 } from '../ui/select'
 import {
   Good,
+  Invoice,
   Service,
   ServiceCalculationType,
   ServiceType,
@@ -74,6 +75,8 @@ export default function ServiceForm({
 
   const [goods, setGoods] = useState<Good[]>([])
 
+  const [invoices, setInvoices] = useState<Invoice[]>([])
+
   const fetchGoodsByCustomerId = async (customerId: string) => {
     const response = await fetch(`/api/goods?customerId=${customerId}`)
     const data = await response.json()
@@ -81,6 +84,16 @@ export default function ServiceForm({
       return data.data // Array of goods
     } else {
       throw new Error(data.error || 'Failed to fetch goods')
+    }
+  }
+
+  const fetchInvoicesByCustomerId = async (customerId: string) => {
+    const response = await fetch(`/api/invoices?customerId=${customerId}`)
+    const data = await response.json()
+    if (response.ok) {
+      return data.data // Array of invoices
+    } else {
+      throw new Error(data.error || 'Failed to fetch invoices')
     }
   }
 
@@ -95,6 +108,7 @@ export default function ServiceForm({
       sellPrice: serviceData?.sellPrice || 0,
       remarks: serviceData?.remarks || '',
       customerId,
+      invoiceId: serviceData?.invoiceId || '',
       goods:
         serviceData?.serviceGoods.map(
           ({ goodId, goodCount, containerNumber, truckNumber }) => ({
@@ -111,6 +125,10 @@ export default function ServiceForm({
     if (customerId) {
       fetchGoodsByCustomerId(customerId).then((data) => {
         setGoods(data)
+      })
+
+      fetchInvoicesByCustomerId(customerId).then((data) => {
+        setInvoices(data)
       })
     }
   }, [customerId])
@@ -152,6 +170,8 @@ export default function ServiceForm({
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log('asd', values)
+
     await execute(values)
 
     if (fieldErrors) {
@@ -308,6 +328,67 @@ export default function ServiceForm({
                     <FormControl>
                       <NumberInput control={form.control} {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Combobox for selecting invoices */}
+              <FormField
+                control={form.control}
+                name="invoiceId"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Invoice</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              'min-w-[400px] justify-between',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value
+                              ? invoices.find((inv) => inv.id === field.value)
+                                  ?.invoiceCode
+                              : 'Select Invoice'}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="min-w-[400px] p-0">
+                        <Command>
+                          <CommandInput placeholder="Search invoice..." />
+                          <CommandList>
+                            <CommandEmpty>Invoice tidak ditemukan</CommandEmpty>
+                            <CommandGroup>
+                              {invoices.map((invoice) => (
+                                <CommandItem
+                                  value={invoice.invoiceCode}
+                                  key={invoice.id}
+                                  onSelect={() =>
+                                    form.setValue('invoiceId', invoice.id)
+                                  }
+                                >
+                                  <Check
+                                    className={cn(
+                                      'mr-2 h-4 w-4',
+                                      invoice.id === field.value
+                                        ? 'opacity-100'
+                                        : 'opacity-0'
+                                    )}
+                                  />
+                                  {invoice.invoiceCode}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}

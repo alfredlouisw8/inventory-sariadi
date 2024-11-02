@@ -45,6 +45,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     customerId,
     goods,
     serviceId,
+    invoiceId,
   } = data
 
   try {
@@ -80,6 +81,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
           remarks,
           buyPrice,
           sellPrice,
+          invoiceId,
           profit: sellPrice - buyPrice,
           serviceGoods: {
             upsert: goods.map(
