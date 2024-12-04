@@ -22,6 +22,12 @@ export function serviceTypeText(type: string) {
       return 'Rework'
     case ServiceType.ForkliftRent:
       return 'Sewa Forklift'
+    case ServiceType.MouQuarantine:
+      return 'MOU Karantina'
+    case ServiceType.CardboardInstallment:
+      return 'Pasang Karton'
+    case ServiceType.RC:
+      return 'RC'
     default:
       // You may want to add a default return value or throw an error here
       return ''

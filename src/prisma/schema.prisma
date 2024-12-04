@@ -222,6 +222,9 @@ enum ServiceType {
   Storage
   Rework
   ForkliftRent
+  MouQuarantine
+  RC
+  CardboardInstallment
 }
 
 enum ServiceCalculationType {
