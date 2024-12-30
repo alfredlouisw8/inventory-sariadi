@@ -94,32 +94,37 @@ export default function ExportInvoiceXlsx({ customerId }: Props) {
 
       let currentRow = 2 // Start from the second row (first row is header)
 
+      console.log('asd', invoicesData)
+
       invoicesData.forEach((customerData) => {
         const { customerName, invoices } = customerData
 
         invoices.forEach((invoice) => {
-          const numServices = invoice.services.length
+          let numServices = invoice.services.length
 
           // Add the first row for each invoice
           worksheet.addRow([customerName, invoice.invoiceCode])
 
-          // Add the service-specific rows (starting from currentRow + 1)
-          invoice.services.forEach((service, index) => {
+          // add rows even if there are no services
+
+          console.log('numServices', numServices)
+
+          if (numServices === 0) {
             const row = worksheet.addRow([
               null, // Skip nama_customer (since it's merged)
-              service.serviceCode, // B3, B4 for services
-              service.serviceType,
-              service.remarks,
-              service.buyPrice,
+              '-', // B3, B4 for services
+              '-',
+              '-',
+              '-',
               invoice.buyPriceTotal, // E3:E4 merged for buyPriceTotal
-              service.date,
+              '-',
               invoice.invoiceDate,
-              service.sellPrice,
+              '-',
               invoice.sellPriceBeforeTax, // Sell price before tax (merged)
               invoice.tax, // PPN (merged)
               invoice.sellPriceTotal, // Sell price total (merged)
               invoice.totalProfit, // Profit (merged)
-              service.date,
+              '-',
               invoice.remarks, // Remarks (merged)
             ])
 
@@ -136,7 +141,44 @@ export default function ExportInvoiceXlsx({ customerId }: Props) {
 
             // Set a minimum height for each row to prevent it from looking cramped
             worksheet.getRow(currentRow).height = 18 // Adjust this value as needed
-          })
+
+            numServices = 1
+          } else {
+            // Add the service-specific rows (starting from currentRow + 1)
+            invoice.services.forEach((service, index) => {
+              const row = worksheet.addRow([
+                null, // Skip nama_customer (since it's merged)
+                service.serviceCode, // B3, B4 for services
+                service.serviceType,
+                service.remarks,
+                service.buyPrice,
+                invoice.buyPriceTotal, // E3:E4 merged for buyPriceTotal
+                service.date,
+                invoice.invoiceDate,
+                service.sellPrice,
+                invoice.sellPriceBeforeTax, // Sell price before tax (merged)
+                invoice.tax, // PPN (merged)
+                invoice.sellPriceTotal, // Sell price total (merged)
+                invoice.totalProfit, // Profit (merged)
+                service.date,
+                invoice.remarks, // Remarks (merged)
+              ])
+
+              // Apply styles to each row cell
+              row.eachCell((cell) => {
+                cell.alignment = { vertical: 'middle', horizontal: 'center' } // Center text
+                cell.border = {
+                  top: { style: 'thin' },
+                  left: { style: 'thin' },
+                  bottom: { style: 'thin' },
+                  right: { style: 'thin' },
+                }
+              })
+
+              // Set a minimum height for each row to prevent it from looking cramped
+              worksheet.getRow(currentRow).height = 18 // Adjust this value as needed
+            })
+          }
 
           // Merge the necessary cells for customer and invoice **after** all services are added
           worksheet.mergeCells(currentRow, 1, currentRow + numServices, 1) // Merge nama_customer (A2:A4)
