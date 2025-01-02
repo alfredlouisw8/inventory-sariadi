@@ -12,62 +12,122 @@ import { TIMEZONE } from '@/utils/const'
 
 export async function exportInvoicesData(
   customerId: string | null,
-  fromDate: string,
-  toDate: string
+  fromValue: string,
+  toValue: string,
+  type: string
 ): Promise<ExportInvoiceData> {
   try {
     // Fetch customer and services with related invoices in one query
     let customerInvoices = []
+    let customer
 
     if (customerId) {
-      const customer = await prisma.customer.findUnique({
-        where: { id: customerId },
-        include: {
-          invoices: {
-            where: {
-              invoiceDate: {
-                gte: new Date(fromDate), // `fromDate` is the start date (e.g., new Date('2023-01-01'))
-                lte: new Date(toDate), // `toDate` is the end date (e.g., new Date('2023-12-31'))
+      if (type === 'date') {
+        customer = await prisma.customer.findUnique({
+          where: { id: customerId },
+          include: {
+            invoices: {
+              where: {
+                invoiceDate: {
+                  gte: new Date(fromValue), // `fromValue` is the start date (e.g., new Date('2023-01-01'))
+                  lte: new Date(toValue), // `toValue` is the end date (e.g., new Date('2023-12-31'))
+                },
+              },
+              include: {
+                services: true,
               },
             },
-            include: {
-              services: true,
+          },
+        })
+
+        if (!customer) {
+          throw new Error('Customer not found')
+        }
+      }
+
+      if (type === 'number') {
+        customer = await prisma.customer.findUnique({
+          where: { id: customerId },
+          include: {
+            invoices: {
+              include: {
+                services: true,
+              },
             },
           },
-        },
-      })
+        })
 
-      if (!customer) {
-        throw new Error('Customer not found')
+        if (!customer) {
+          throw new Error('Customer not found')
+        }
+
+        // Filter invoices based on the number in the invoiceCode
+        const filteredInvoices = customer.invoices.filter((invoice) => {
+          const firstNumber = parseInt(invoice.invoiceCode.split('/')[0], 10) // Extract the first number
+          return (
+            firstNumber >= parseInt(fromValue) &&
+            firstNumber <= parseInt(toValue)
+          ) // Check if it falls within the range
+        })
+
+        // Replace the original invoices with the filtered ones
+        customer.invoices = filteredInvoices
       }
 
       customerInvoices.push(customer)
     } else {
-      const customer = await prisma.customer.findMany({
-        where: {
-          invoices: {
-            some: {
-              invoiceDate: {
-                gte: new Date(fromDate),
-                lte: new Date(toDate),
+      if (type === 'date') {
+        customer = await prisma.customer.findMany({
+          where: {
+            invoices: {
+              some: {
+                invoiceDate: {
+                  gte: new Date(fromValue),
+                  lte: new Date(toValue),
+                },
               },
             },
           },
-        },
-        include: {
-          invoices: {
-            where: {
-              invoiceDate: {
-                gte: new Date(fromDate), // `fromDate` is the start date (e.g., new Date('2023-01-01'))
-                lte: new Date(toDate), // `toDate` is the end date (e.g., new Date('2023-12-31'))
+          include: {
+            invoices: {
+              where: {
+                invoiceDate: {
+                  gte: new Date(fromValue), // `fromValue` is the start date (e.g., new Date('2023-01-01'))
+                  lte: new Date(toValue), // `toValue` is the end date (e.g., new Date('2023-12-31'))
+                },
+              },
+              include: {
+                services: true,
               },
             },
-            include: {
-              services: true,
+          },
+        })
+      }
+
+      if (type === 'number') {
+        customer = await prisma.customer.findMany({
+          include: {
+            invoices: {
+              include: {
+                services: true,
+              },
             },
           },
-        },
-      })
+        })
+
+        // Extract and filter based on the first number in `invoiceCode`
+        customer = customer.map((cust) => {
+          const filteredInvoices = cust.invoices.filter((invoice) => {
+            const firstNumber = parseInt(invoice.invoiceCode.split('/')[0], 10) // Extract the first number
+            return (
+              firstNumber >= parseInt(fromValue) &&
+              firstNumber <= parseInt(toValue)
+            ) // Compare with range
+          })
+
+          return { ...cust, invoices: filteredInvoices }
+        })
+      }
 
       if (!customer) {
         throw new Error('Customer not found')
@@ -77,8 +137,8 @@ export async function exportInvoicesData(
     }
 
     const data = customerInvoices.map((customer) => ({
-      customerName: customer.name,
-      invoices: customer.invoices.map((invoice) => {
+      customerName: customer!.name,
+      invoices: customer!.invoices.map((invoice) => {
         const buyPriceTotal = invoice.services.reduce(
           (acc, service) => acc + (service.buyPrice || 0),
           0

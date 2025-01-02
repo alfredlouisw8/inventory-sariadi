@@ -1,24 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma' // Adjust the path to your Prisma client instance
 import { exportInvoicesData } from '@/actions/invoices/exportInvoices'
+import { Type } from 'lucide-react'
 
 export async function GET(req: NextRequest) {
   try {
     // Get the customerId from the query parameters
     const { searchParams } = new URL(req.url)
     const customerId = searchParams.get('customerId')
-    const toDate = searchParams.get('toDate')
-    const fromDate = searchParams.get('fromDate')
+    const toValue = searchParams.get('to')
+    const fromValue = searchParams.get('from')
+    const type = searchParams.get('type')
 
-    if (!toDate || !fromDate) {
-      return NextResponse.json(
-        { error: 'Silahkan pilih tanggal dulu' },
-        { status: 400 }
-      )
+    if (!fromValue || !toValue || !type) {
+      return NextResponse.json({ error: 'Input error' }, { status: 400 })
     }
 
     // Fetch goods based on customerId
-    const result = await exportInvoicesData(customerId, fromDate, toDate)
+    const result = await exportInvoicesData(
+      customerId,
+      fromValue,
+      toValue,
+      type
+    )
 
     return NextResponse.json({ data: result }, { status: 200 })
   } catch (error: any) {

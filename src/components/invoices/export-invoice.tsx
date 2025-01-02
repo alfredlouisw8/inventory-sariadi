@@ -18,6 +18,9 @@ import { DateRange } from 'react-day-picker'
 import { format } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 import { TIMEZONE } from '@/utils/const'
+import { FormControl, FormItem, FormLabel } from '../ui/form'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
 
 type Props = {
   customerId: string
@@ -25,31 +28,11 @@ type Props = {
 
 export default function ExportInvoiceXlsx({ customerId }: Props) {
   const [dateRange, setDateRange] = useState<DateRange | undefined>()
+  const [fromNumber, setFromNumber] = useState<string>('')
+  const [toNumber, setToNumber] = useState<string>('')
 
-  async function exportInvoicesToExcel(customerId: string) {
+  async function generateExcel(invoicesData: ExportInvoiceData) {
     try {
-      // Fetch invoice data from the API
-      const response = await fetch(
-        `/api/invoices/export?customerId=${customerId}&fromDate=${formatInTimeZone(
-          dateRange?.from || new Date(),
-          TIMEZONE,
-          'yyyy-MM-dd'
-        )}&toDate=${formatInTimeZone(
-          dateRange?.to || new Date(),
-          TIMEZONE,
-          'yyyy-MM-dd'
-        )}`
-      )
-
-      if (!response.ok) throw new Error('Failed to fetch invoice data')
-
-      let invoicesData: ExportInvoiceData
-
-      const { data } = await response.json()
-      if (!data.length) throw new Error('No data available for export')
-
-      invoicesData = data
-
       const workbook = new ExcelJS.Workbook()
       const worksheet = workbook.addWorksheet('Invoices')
 
@@ -94,8 +77,6 @@ export default function ExportInvoiceXlsx({ customerId }: Props) {
 
       let currentRow = 2 // Start from the second row (first row is header)
 
-      console.log('asd', invoicesData)
-
       invoicesData.forEach((customerData) => {
         const { customerName, invoices } = customerData
 
@@ -106,8 +87,6 @@ export default function ExportInvoiceXlsx({ customerId }: Props) {
           worksheet.addRow([customerName, invoice.invoiceCode])
 
           // add rows even if there are no services
-
-          console.log('numServices', numServices)
 
           if (numServices === 0) {
             const row = worksheet.addRow([
@@ -257,6 +236,49 @@ export default function ExportInvoiceXlsx({ customerId }: Props) {
     }
   }
 
+  async function exportInvoices(customerId: string, type: 'date' | 'number') {
+    try {
+      // Fetch invoice data from the API
+      let from, to
+
+      if (type === 'date') {
+        from = formatInTimeZone(
+          dateRange?.from || new Date(),
+          TIMEZONE,
+          'yyyy-MM-dd'
+        )
+        to = formatInTimeZone(
+          dateRange?.to || new Date(),
+          TIMEZONE,
+          'yyyy-MM-dd'
+        )
+      }
+
+      if (type === 'number') {
+        from = fromNumber
+        to = toNumber
+      }
+
+      const response = await fetch(
+        `/api/invoices/export?customerId=${customerId}&from=${from}&to=${to}&type=${type}`
+      )
+
+      if (!response.ok) throw new Error('Failed to fetch invoice data')
+
+      let invoicesData: ExportInvoiceData
+
+      const { data } = await response.json()
+      if (!data.length) throw new Error('No data available for export')
+
+      invoicesData = data
+
+      await generateExcel(invoicesData)
+    } catch (error) {
+      console.error('Error exporting invoices to Excel:', error)
+      alert('Failed to export invoices.')
+    }
+  }
+
   return (
     <>
       <Dialog>
@@ -274,10 +296,33 @@ export default function ExportInvoiceXlsx({ customerId }: Props) {
               onChange={setDateRange}
             />
           </div>
+          <div className="flex items-center gap-5">
+            <div className="flex-1 flex flex-col gap-2">
+              <Label>Start Invoice No</Label>
+              <Input
+                type="number"
+                placeholder="Start Invoice No"
+                onChange={(e) => setFromNumber(e.target.value)}
+                value={fromNumber}
+              />
+            </div>
+            <div className="flex-1 flex flex-col gap-2">
+              <Label>End Invoice No</Label>
+              <Input
+                type="number"
+                placeholder="End Invoice No"
+                onChange={(e) => setToNumber(e.target.value)}
+                value={toNumber}
+              />
+            </div>
+          </div>
 
           <DialogFooter>
-            <Button onClick={() => exportInvoicesToExcel(customerId)}>
-              Export
+            <Button onClick={() => exportInvoices(customerId, 'date')}>
+              Export By Date
+            </Button>
+            <Button onClick={() => exportInvoices(customerId, 'number')}>
+              Export By Invoice No
             </Button>
           </DialogFooter>
         </DialogContent>

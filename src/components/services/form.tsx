@@ -170,8 +170,6 @@ export default function ServiceForm({
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log('asd', values)
-
     await execute(values)
 
     if (fieldErrors) {
