@@ -28,6 +28,8 @@ export function serviceTypeText(type: string) {
       return 'Pasang Karton'
     case ServiceType.RC:
       return 'RC'
+    case ServiceType.Intern:
+      return 'Intern'
     default:
       // You may want to add a default return value or throw an error here
       return ''

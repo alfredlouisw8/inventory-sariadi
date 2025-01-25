@@ -225,6 +225,7 @@ enum ServiceType {
   MouQuarantine
   RC
   CardboardInstallment
+  Intern
 }
 
 enum ServiceCalculationType {
